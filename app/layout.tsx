@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { connectToMongoDB } from '@/lib/db';
 import localFont from 'next/font/local';
 import './css/globals.css';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
@@ -24,6 +25,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  connectToMongoDB();
   return (
     <html lang='en'>
       <TooltipProvider>
