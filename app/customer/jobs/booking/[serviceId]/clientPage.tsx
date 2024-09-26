@@ -104,7 +104,8 @@ export default function BookingClient({ service }: { service: any }) {
                           d='M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z'></path>
                       </svg>
                     </CardDescription>
-                    <CardTitle className='text-2xl flex'>
+                    <CardTitle className='text-2xl flex items-center'>
+                      <p className='mr-2'>4.9</p>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         width='24'
@@ -112,9 +113,9 @@ export default function BookingClient({ service }: { service: any }) {
                         viewBox='0 0 24 24'
                         fill='#000000'
                         stroke='currentColor'
-                        stroke-width='2'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         className='lucide lucide-star'>
                         <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
                       </svg>
@@ -125,9 +126,9 @@ export default function BookingClient({ service }: { service: any }) {
                         viewBox='0 0 24 24'
                         fill='#000000'
                         stroke='currentColor'
-                        stroke-width='2'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         className='lucide lucide-star'>
                         <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
                       </svg>
@@ -138,9 +139,9 @@ export default function BookingClient({ service }: { service: any }) {
                         viewBox='0 0 24 24'
                         fill='#000000'
                         stroke='currentColor'
-                        stroke-width='2'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         className='lucide lucide-star'>
                         <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
                       </svg>
@@ -151,9 +152,9 @@ export default function BookingClient({ service }: { service: any }) {
                         viewBox='0 0 24 24'
                         fill='#000000'
                         stroke='currentColor'
-                        stroke-width='2'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         className='lucide lucide-star'>
                         <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
                       </svg>
@@ -164,16 +165,16 @@ export default function BookingClient({ service }: { service: any }) {
                         viewBox='0 0 24 24'
                         fill='#000000'
                         stroke='currentColor'
-                        stroke-width='2'
-                        stroke-linecap='round'
-                        stroke-linejoin='round'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
                         className='lucide lucide-star'>
                         <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2' />
                       </svg>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className='text-xs text-muted-foreground'>Based on 100 reviews</div>
+                    <div className='text-xs text-muted-foreground'>Based on 559 reviews</div>
                   </CardContent>
                 </Card>
               </a>
