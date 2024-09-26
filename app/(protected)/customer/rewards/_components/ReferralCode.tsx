@@ -20,6 +20,7 @@ export default function ReferralCode({
     }
     const result = await user?.update({
       unsafeMetadata: {
+        ...user.unsafeMetadata,
         referralCode: newReferralCode,
       },
     });
