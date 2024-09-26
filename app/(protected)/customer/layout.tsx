@@ -1,10 +1,10 @@
 'use client';
 
-import '../css/globals.css';
+import '../../css/globals.css';
 import Link from 'next/link';
 
 import { BriefcaseBusiness, Home, NotepadText, PanelLeft, Quote, Settings } from 'lucide-react';
-import { NAVIGATION_LABELS } from '../constants';
+import { NAVIGATION_LABELS } from '../../constants';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
