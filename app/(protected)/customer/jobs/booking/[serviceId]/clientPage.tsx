@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { SelectValue, SelectTrigger, SelectContent, SelectItem, Select } from '@/components/ui/select';
 import { addJob } from '@/lib/actions/jobs';
+import { useUser } from '@clerk/clerk-react';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -27,6 +28,7 @@ export default function BookingClient({ service }: { service: any }) {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
   const router = useRouter();
+  const { isSignedIn, isLoaded } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,6 +55,8 @@ export default function BookingClient({ service }: { service: any }) {
       router.push('/customer/jobs');
     }
   };
+
+  if (!isLoaded) return <div>Loading...</div>;
 
   return (
     <div className='flex w-full flex-col'>
@@ -82,28 +86,7 @@ export default function BookingClient({ service }: { service: any }) {
               <a href='https://maps.app.goo.gl/n6cbgUSQMymZbnyd8' target='_blank' rel='noreferrer'>
                 <Card className='md:col-span-1' x-chunk='dashboard-05-chunk-1'>
                   <CardHeader className='pb-2'>
-                    <CardDescription className='flex gap-2'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        x='0px'
-                        y='0px'
-                        width='28'
-                        height='28'
-                        viewBox='0 0 48 48'>
-                        <path
-                          fill='#FFC107'
-                          d='M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z'></path>
-                        <path
-                          fill='#FF3D00'
-                          d='M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z'></path>
-                        <path
-                          fill='#4CAF50'
-                          d='M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z'></path>
-                        <path
-                          fill='#1976D2'
-                          d='M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z'></path>
-                      </svg>
-                    </CardDescription>
+                    <CardDescription className='flex gap-2'>Google Reviews</CardDescription>
                     <CardTitle className='text-2xl flex items-center'>
                       <p className='mr-2'>4.9</p>
                       <svg
@@ -179,128 +162,84 @@ export default function BookingClient({ service }: { service: any }) {
                 </Card>
               </a>
             </div>
-            <Card x-chunk='dashboard-05-chunk-3'>
-              <CardHeader className='px-7'>
-                <CardTitle>Make a Booking</CardTitle>
-                <CardDescription>Payment will be made onsite.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Form {...form}>
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      form.handleSubmit(onSubmit)();
-                    }}
-                    className='max-w-md w-full flex flex-col gap-4'>
-                    <FormField
-                      control={form.control}
-                      name='name'
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder='Name' {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
+            {!isSignedIn && (
+              <Card x-chunk='dashboard-05-chunk-3'>
+                <CardHeader className='px-7'>
+                  <CardTitle>Sign In or Create An Account</CardTitle>
+                  <CardDescription>You can only make a booking if you are signed in.</CardDescription>
+                </CardHeader>
+                <CardContent></CardContent>
+              </Card>
+            )}
+            {isSignedIn && (
+              <Card x-chunk='dashboard-05-chunk-3'>
+                <CardHeader className='px-7'>
+                  <CardTitle>Make a Booking</CardTitle>
+                  <CardDescription>Payment will be made onsite.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Form {...form}>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        form.handleSubmit(onSubmit)();
                       }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='description'
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Input placeholder='Description' {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='price'
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Price</FormLabel>
-                            <FormControl>
-                              <Input
-                                type='number'
-                                placeholder='Price'
-                                {...field}
-                                onChange={(event) => field.onChange(+event.target.value)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='volumeDiscountPercentage'
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Volume Discount Percentage (%)</FormLabel>
-                            <FormControl>
-                              <Input
-                                type='number'
-                                placeholder='Volume Discount Percentage (%)'
-                                {...field}
-                                onChange={(event) => field.onChange(+event.target.value)}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='status'
-                      render={({ field }) => {
-                        return (
-                          <FormItem>
-                            <FormLabel>Service Status</FormLabel>
-                            <Select onValueChange={field.onChange}>
+                      className='max-w-md w-full flex flex-col gap-4'>
+                      <FormField
+                        control={form.control}
+                        name='name'
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Name</FormLabel>
                               <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder='Select a service status' />
-                                </SelectTrigger>
+                                <Input placeholder='Name' {...field} />
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value='Draft'>Draft</SelectItem>
-                                <SelectItem value='Active'>Active</SelectItem>
-                                <SelectItem value='Disabled'>Disabled</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                    <Button type='submit' className='w-full'>
-                      Create Service
-                    </Button>
-                    {message ? <h2>{message}</h2> : null}
-                    {errors ? (
-                      <div className='mb-10 text-red-500'>
-                        {Object.keys(errors).map((key) => (
-                          <p key={key}>{`${key}: ${errors[key as keyof typeof errors]}`}</p>
-                        ))}
-                      </div>
-                    ) : null}
-                  </form>
-                </Form>
-              </CardContent>
-            </Card>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='status'
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Service Status</FormLabel>
+                              <Select onValueChange={field.onChange}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder='Select a service status' />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value='Draft'>Draft</SelectItem>
+                                  <SelectItem value='Active'>Active</SelectItem>
+                                  <SelectItem value='Disabled'>Disabled</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+                      <Button type='submit' className='w-full'>
+                        Create Service
+                      </Button>
+                      {message ? <h2>{message}</h2> : null}
+                      {errors ? (
+                        <div className='mb-10 text-red-500'>
+                          {Object.keys(errors).map((key) => (
+                            <p key={key}>{`${key}: ${errors[key as keyof typeof errors]}`}</p>
+                          ))}
+                        </div>
+                      ) : null}
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            )}
           </div>
           <div>
             <Card className='overflow-hidden' x-chunk='dashboard-05-chunk-4'>
