@@ -1,24 +1,26 @@
-// components/ShareModal.tsx
 import { Copy, XIcon } from "lucide-react";
 import {
   WhatsappShareButton,
   TelegramShareButton,
-  FacebookMessengerShareButton,
   EmailShareButton,
   WhatsappIcon,
   TelegramIcon,
-  FacebookMessengerIcon,
   EmailIcon,
+  TwitterShareButton,
+  TwitterIcon,
 } from "next-share";
 import { SHARE_MODAL } from "../../customer/(home)/constants";
+import { useUser } from "@clerk/nextjs";
 
 interface ShareModalProps {
   onClose: () => void;
 }
 
 const ShareModal: React.FC<ShareModalProps> = ({ onClose }) => {
-  // TODO: retrieve the referral code from the backend
-  const referralCode = "https://yourwebsite.com";
+  const { user } = useUser();
+  const referralCode = user?.unsafeMetadata.referralCode as string;
+
+  const referralText = SHARE_MODAL.REFERRAL_TEXT(referralCode);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -36,7 +38,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ onClose }) => {
 
         <div className="flex justify-around items-center mb-4">
           <div className="flex flex-col items-center">
-            <WhatsappShareButton url={referralCode}>
+            <WhatsappShareButton url={referralText}>
               <WhatsappIcon size={40} round />
             </WhatsappShareButton>
             <span className="mt-2 text-sm font-medium text-gray-700">
@@ -45,7 +47,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ onClose }) => {
           </div>
 
           <div className="flex flex-col items-center">
-            <TelegramShareButton url={referralCode}>
+            <TelegramShareButton url={referralText}>
               <TelegramIcon size={40} round />
             </TelegramShareButton>
             <span className="mt-2 text-sm font-medium text-gray-700">
@@ -54,20 +56,16 @@ const ShareModal: React.FC<ShareModalProps> = ({ onClose }) => {
           </div>
 
           <div className="flex flex-col items-center">
-            {/* TODO: find our what is appID */}
-            <FacebookMessengerShareButton
-              url={referralCode}
-              appId="YOUR_FACEBOOK_APP_ID"
-            >
-              <FacebookMessengerIcon size={40} round />
-            </FacebookMessengerShareButton>
+            <TwitterShareButton url={referralText}>
+              <TwitterIcon size={40} round />
+            </TwitterShareButton>
             <span className="mt-2 text-sm font-medium text-gray-700">
-              {SHARE_MODAL.MESSENGER}
+              {SHARE_MODAL.TWITTER}
             </span>
           </div>
 
           <div className="flex flex-col items-center">
-            <EmailShareButton url={referralCode}>
+            <EmailShareButton url={referralText}>
               <EmailIcon size={40} round />
             </EmailShareButton>
             <span className="mt-2 text-sm font-medium text-gray-700">
@@ -77,7 +75,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ onClose }) => {
         </div>
 
         <button
-          onClick={() => navigator.clipboard.writeText(referralCode)}
+          onClick={() => navigator.clipboard.writeText(referralText)}
           className="flex items-center justify-center gap-2 text-lg font-medium"
         >
           <Copy className="h-6 w-6" />

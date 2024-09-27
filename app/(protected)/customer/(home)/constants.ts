@@ -10,6 +10,8 @@ export const SHARE_MODAL = {
   COPY: "Copy",
   WHATSAPP: "WhatsApp",
   TELEGRAM: "Telegram",
-  MESSENGER: "Messenger",
+  TWITTER: "X (Twitter)",
   EMAIL: "Email",
+  REFERRAL_TEXT: (referralCode: string) =>
+    `Hey there! 👋🏻 I'd love to invite you to experience Repair.sg's cleaning and maintenance services! Unlock $15 off on your first booking with my special code: ${referralCode}. A treat just for you! 🎁`,
 } as const;
