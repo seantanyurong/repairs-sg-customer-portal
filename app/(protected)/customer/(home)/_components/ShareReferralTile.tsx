@@ -1,8 +1,17 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Share, SparklesIcon } from "lucide-react";
 import { SHARE_REFERRAL } from "../constants";
+import { useState } from "react";
+import ShareModal from "@/app/(protected)/_components/share/ShareModal";
 
-export default function ReferralBanner() {
+const ShareReferralTile: React.FC = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="relative w-full mx-auto mt-8">
       {/* Banner container */}
@@ -24,12 +33,19 @@ export default function ReferralBanner() {
 
         {/* Share button */}
         <div>
-          <Button className="bg-white text-blue-500 hover:bg-gray-100 border border-gray-300">
+          <Button
+            onClick={openModal}
+            className="bg-white text-blue-500 hover:bg-gray-100 border border-gray-300"
+          >
             <Share className="h-5 w-5 mr-2" />
-            Share
+            {SHARE_REFERRAL.SHARE}
           </Button>
+
+          {isModalOpen && <ShareModal onClose={closeModal} />}
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default ShareReferralTile;
