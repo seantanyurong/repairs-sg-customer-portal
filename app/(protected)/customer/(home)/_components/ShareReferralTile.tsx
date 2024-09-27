@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Share, SparklesIcon } from "lucide-react";
+import { SHARE_REFERRAL } from "../constants";
 
 export default function ReferralBanner() {
   return (
@@ -14,11 +15,10 @@ export default function ReferralBanner() {
           </div>
           {/* Text content */}
           <div>
-            <p className="text-lg font-bold text-primary">Give $15, Get $15</p>
-            <p className="text-sm text-primary">
-              Every friend you refer gets $15 off their first booking and you
-              get $15
+            <p className="text-lg font-bold text-primary">
+              {SHARE_REFERRAL.TITLE}
             </p>
+            <p className="text-sm text-primary">{SHARE_REFERRAL.SUBTITLE}</p>
           </div>
         </div>
 
