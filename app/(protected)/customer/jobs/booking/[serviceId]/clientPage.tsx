@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { SelectValue, SelectTrigger, SelectContent, SelectItem, Select } from '@/components/ui/select';
 import { addJob } from '@/lib/actions/jobs';
 import { useUser } from '@clerk/clerk-react';
+import { usePathname } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -29,6 +30,7 @@ export default function BookingClient({ service }: { service: any }) {
   const [errors, setErrors] = useState({});
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -168,7 +170,14 @@ export default function BookingClient({ service }: { service: any }) {
                   <CardTitle>Sign In or Create An Account</CardTitle>
                   <CardDescription>You can only make a booking if you are signed in.</CardDescription>
                 </CardHeader>
-                <CardContent></CardContent>
+                <CardContent>
+                  <Button className='w-full mb-4' onClick={() => router.push(`/sign-in?redirect_url=${pathname}`)}>
+                    Sign In
+                  </Button>
+                  <Button className='w-full' onClick={() => router.push(`/sign-up?redirect_url=${pathname}`)}>
+                    Create Account
+                  </Button>
+                </CardContent>
               </Card>
             )}
             {isSignedIn && (
