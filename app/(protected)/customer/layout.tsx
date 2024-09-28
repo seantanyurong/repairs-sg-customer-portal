@@ -5,12 +5,12 @@ import Link from "next/link";
 
 import {
   BriefcaseBusiness,
-  Coins,
   Home,
   NotepadText,
   PanelLeft,
   Quote,
   Settings,
+  TicketPercent,
 } from "lucide-react";
 import { NAVIGATION_LABELS } from "../../constants";
 import {
@@ -54,7 +54,7 @@ export default function PublicLayout({
                 <Link
                   href="/customer/jobs"
                   className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/jobs"
+                    pathname === "/customer/jobs"
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   } transition-colors hover:text-foreground md:h-8 md:w-8`}
@@ -72,7 +72,7 @@ export default function PublicLayout({
                 <Link
                   href="/customer/invoices"
                   className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/invoices"
+                    pathname === "/customer/invoices"
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   } transition-colors hover:text-foreground md:h-8 md:w-8`}
@@ -90,7 +90,7 @@ export default function PublicLayout({
                 <Link
                   href="/customer/quote"
                   className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/quote"
+                    pathname === "/customer/quote"
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   } transition-colors hover:text-foreground md:h-8 md:w-8`}
@@ -110,12 +110,12 @@ export default function PublicLayout({
                 <Link
                   href="/customer/rewards"
                   className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/rewards"
+                    pathname === "/customer/rewards"
                       ? "bg-accent text-accent-foreground"
                       : "text-muted-foreground"
                   } transition-colors hover:text-foreground md:h-8 md:w-8`}
                 >
-                  <Coins className="h-5 w-5" />
+                  <TicketPercent className="h-5 w-5" />
                   <span className="sr-only">{NAVIGATION_LABELS.REWARDS}</span>
                 </Link>
               </TooltipTrigger>
@@ -170,9 +170,9 @@ export default function PublicLayout({
                     <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
                   </Link>
                   <Link
-                    href="/jobs"
+                    href="/customer/jobs"
                     className={`flex items-center gap-4 px-2.5 ${
-                      pathname === "/jobs"
+                      pathname === "/customer/jobs"
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -182,9 +182,9 @@ export default function PublicLayout({
                     {NAVIGATION_LABELS.JOBS}
                   </Link>
                   <Link
-                    href="/invoices"
+                    href="/customer/invoices"
                     className={`flex items-center gap-4 px-2.5 ${
-                      pathname === "/invoices"
+                      pathname === "/customer/invoices"
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -194,9 +194,9 @@ export default function PublicLayout({
                     {NAVIGATION_LABELS.INVOICES}
                   </Link>
                   <Link
-                    href="/quote"
+                    href="/customer/quote"
                     className={`flex items-center gap-4 px-2.5 ${
-                      pathname === "/quote"
+                      pathname === "/customer/quote"
                         ? "text-foreground"
                         : "text-muted-foreground hover:text-foreground"
                     }`}
@@ -204,6 +204,18 @@ export default function PublicLayout({
                   >
                     <Quote className="h-5 w-5" />
                     {NAVIGATION_LABELS.QUOTATIONS}
+                  </Link>
+                  <Link
+                    href="/customer/rewards"
+                    className={`flex items-center gap-4 px-2.5 ${
+                      pathname === "/customer/rewards"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <TicketPercent className="h-5 w-5" />
+                    {NAVIGATION_LABELS.REWARDS}
                   </Link>
                   <Link
                     href="#"
