@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import {
   BriefcaseBusiness,
+  Hammer,
   Home,
   NotepadText,
   PanelLeft,
@@ -49,6 +50,24 @@ export default function PublicLayout({
               <Home className="h-4 w-4 transition-all group-hover:scale-110" />
               <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
             </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/customer/services"
+                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                    pathname === "/customer/services"
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground"
+                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                >
+                  <Hammer className="h-5 w-5" />
+                  <span className="sr-only">{NAVIGATION_LABELS.SERVICES}</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                {NAVIGATION_LABELS.SERVICES}
+              </TooltipContent>
+            </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
@@ -168,6 +187,18 @@ export default function PublicLayout({
                   >
                     <Home className="h-5 w-5 transition-all group-hover:scale-110" />
                     <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
+                  </Link>
+                  <Link
+                    href="/customer/services"
+                    className={`flex items-center gap-4 px-2.5 ${
+                      pathname === "/customer/services"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <Hammer className="h-5 w-5" />
+                    {NAVIGATION_LABELS.SERVICES}
                   </Link>
                   <Link
                     href="/customer/jobs"
