@@ -16,11 +16,12 @@ import { SelectValue, SelectTrigger, SelectContent, SelectItem, Select } from '@
 import { addJob } from '@/lib/actions/jobs';
 import { useUser } from '@clerk/clerk-react';
 import { usePathname } from 'next/navigation';
+import { format, addHours, startOfDay, addDays, isAfter } from 'date-fns';
 
 const formSchema = z.object({
   quantity: z.number().min(1),
   jobAddress: z.string().min(1),
-  schedules: z.enum(['1000-1200', '1200-1400', '1400-1600', '1600-1800', '1800-2000']),
+  schedule: z.string(),
   description: z.string(),
 });
 
@@ -40,6 +41,35 @@ export default function BookingClient({ service }: { service: any }) {
       description: '',
     },
   });
+
+  // Function to generate 2-hour intervals for the next 3 days
+  const generateScheduleOptions = () => {
+    const options = [];
+    const startDate = addDays(new Date(), 1); // Start from tomorrow
+    const endDate = addDays(startDate, 3); // Up to 3 days from tomorrow
+
+    let currentDate = startOfDay(startDate); // Start at 00:00 tomorrow
+    while (isAfter(endDate, currentDate)) {
+      // Create time slots from 10:00 to 20:00 each day
+      for (let hour = 10; hour < 20; hour += 2) {
+        const startTime = addHours(startOfDay(currentDate), hour);
+        const endTime = addHours(startTime, 2);
+
+        options.push({
+          value: JSON.stringify({
+            timeStart: format(startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+            timeEnd: format(endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+          }), // Pass both start and end time in the value
+          label: format(startTime, 'MMMM d, yyyy HH:mm') + ' - ' + format(endTime, 'HH:mm'),
+        });
+      }
+      currentDate = addDays(currentDate, 1); // Move to the next day
+    }
+
+    return options;
+  };
+
+  const scheduleOptions = generateScheduleOptions();
 
   const onSubmit = async () => {
     setMessage('');
@@ -233,7 +263,7 @@ export default function BookingClient({ service }: { service: any }) {
                       {/* Schedules Field */}
                       <FormField
                         control={form.control}
-                        name='schedules'
+                        name='schedule'
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Preferred Schedule</FormLabel>
@@ -244,11 +274,11 @@ export default function BookingClient({ service }: { service: any }) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                <SelectItem value='1000-1200'>10:00 - 12:00</SelectItem>
-                                <SelectItem value='1200-1400'>12:00 - 14:00</SelectItem>
-                                <SelectItem value='1400-1600'>14:00 - 16:00</SelectItem>
-                                <SelectItem value='1600-1800'>16:00 - 18:00</SelectItem>
-                                <SelectItem value='1800-2000'>18:00 - 20:00</SelectItem>
+                                {scheduleOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormMessage />
