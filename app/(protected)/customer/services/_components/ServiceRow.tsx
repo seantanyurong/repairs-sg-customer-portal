@@ -20,7 +20,7 @@ export default function ServiceRow({ id, name, description }: { id: string; name
       <TableCell className='font-medium'>{name}</TableCell>
       <TableCell className='hidden md:table-cell font-medium'>{description}</TableCell>
       <TableCell className='text-right'>
-        <Link href={`/customer/jobs/booking/${id}`}>
+        <Link href={`/customer/services/booking/${id}`}>
           <Button size={'sm'}>Book Service</Button>
         </Link>
       </TableCell>
