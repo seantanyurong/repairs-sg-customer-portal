@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
@@ -15,13 +16,13 @@ import { SelectValue, SelectTrigger, SelectContent, SelectItem, Select } from '@
 import { addJob } from '@/lib/actions/jobs';
 import { useUser } from '@clerk/clerk-react';
 import { usePathname } from 'next/navigation';
+import { format, addHours, startOfDay, addDays, isAfter } from 'date-fns';
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().min(1),
-  price: z.number(),
-  volumeDiscountPercentage: z.number(),
-  status: z.enum(['Draft', 'Active', 'Disabled']),
+  quantity: z.number().min(1),
+  jobAddress: z.string().min(1),
+  schedule: z.string(),
+  description: z.string(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,17 +36,46 @@ export default function BookingClient({ service }: { service: any }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      quantity: 1,
+      jobAddress: '',
       description: '',
-      price: 0,
-      volumeDiscountPercentage: 0,
     },
   });
+
+  // Function to generate 2-hour intervals for the next 3 days
+  const generateScheduleOptions = () => {
+    const options = [];
+    const startDate = addDays(new Date(), 1); // Start from tomorrow
+    const endDate = addDays(startDate, 3); // Up to 3 days from tomorrow
+
+    let currentDate = startOfDay(startDate); // Start at 00:00 tomorrow
+    while (isAfter(endDate, currentDate)) {
+      // Create time slots from 10:00 to 20:00 each day
+      for (let hour = 10; hour < 20; hour += 2) {
+        const startTime = addHours(startOfDay(currentDate), hour);
+        const endTime = addHours(startTime, 2);
+
+        options.push({
+          value: JSON.stringify({
+            timeStart: format(startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+            timeEnd: format(endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+          }), // Pass both start and end time in the value
+          label: format(startTime, 'MMMM d, yyyy HH:mm') + ' - ' + format(endTime, 'HH:mm'),
+        });
+      }
+      currentDate = addDays(currentDate, 1); // Move to the next day
+    }
+
+    return options;
+  };
+
+  const scheduleOptions = generateScheduleOptions();
 
   const onSubmit = async () => {
     setMessage('');
     setErrors({});
-    const result = await addJob(form.getValues());
+    const formValues = form.getValues();
+    const result = await addJob({ ...formValues, serviceId: service._id.toString() });
     if (result?.errors) {
       setMessage(result.message);
       setErrors(result.errors);
@@ -54,7 +84,7 @@ export default function BookingClient({ service }: { service: any }) {
       setMessage(result.message);
       router.refresh();
       form.reset(form.getValues());
-      router.push('/customer/jobs');
+      router.push('/customer/services');
     }
   };
 
@@ -194,44 +224,81 @@ export default function BookingClient({ service }: { service: any }) {
                         form.handleSubmit(onSubmit)();
                       }}
                       className='max-w-md w-full flex flex-col gap-4'>
+                      {/* Quantity Field */}
                       <FormField
                         control={form.control}
-                        name='name'
-                        render={({ field }) => {
-                          return (
-                            <FormItem>
-                              <FormLabel>Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder='Name' {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          );
-                        }}
+                        name='quantity'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Quantity</FormLabel>
+                            <FormControl>
+                              <Input
+                                type='number'
+                                min='1'
+                                placeholder='Enter quantity'
+                                {...field}
+                                onChange={(event) => field.onChange(+event.target.value)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
+
+                      {/* Job Address Field */}
                       <FormField
                         control={form.control}
-                        name='status'
-                        render={({ field }) => {
-                          return (
-                            <FormItem>
-                              <FormLabel>Service Status</FormLabel>
-                              <Select onValueChange={field.onChange}>
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder='Select a service status' />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value='Draft'>Draft</SelectItem>
-                                  <SelectItem value='Active'>Active</SelectItem>
-                                  <SelectItem value='Disabled'>Disabled</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          );
-                        }}
+                        name='jobAddress'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Job Address</FormLabel>
+                            <FormControl>
+                              <Input placeholder='Enter job address' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Schedules Field */}
+                      <FormField
+                        control={form.control}
+                        name='schedule'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Preferred Schedule</FormLabel>
+                            <Select onValueChange={field.onChange}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder='Select a schedule' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {scheduleOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Description Field */}
+                      <FormField
+                        control={form.control}
+                        name='description'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Additional Notes</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder='Enter notes' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
                       <Button type='submit' className='w-full'>
                         Create Service
