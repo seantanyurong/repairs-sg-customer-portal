@@ -54,21 +54,19 @@ const jobSchema = new mongoose.Schema(
       default: 'Draft',
       required: [true, 'Job Status Is Required!'],
     },
+    schedule: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Schedule',
+    },
   },
   { versionKey: false, timestamps: true },
 );
 
 export default mongoose.models.Job || mongoose.model('Job', jobSchema);
 
-// schedules: [
-//   {
-//     type: mongoose.Schema.Types.ObjectId,
-//     ref: 'Schedule',
-//   },
-// ],
-
 // Changed Job Address to just a string for now
 // Changed Customer to clerk's customer ID
+// Removed these three below for now
 // categoryType: [
 //   {
 //     type: String,
