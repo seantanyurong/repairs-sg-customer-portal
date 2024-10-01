@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
-import RewardDetail from "./RewardDetail";
 
 export default function RewardRow({
   // id,
@@ -37,15 +36,6 @@ export default function RewardRow({
         ${amount}
       </TableCell>
       <TableCell className="hidden md:table-cell">{expiryDate}</TableCell>
-      <TableCell>
-        {status === "ACTIVE" && (
-          <RewardDetail
-            rewardCode={rewardCode}
-            amount={amount}
-            expiryDate={expiryDate}
-          />
-        )}
-      </TableCell>
     </TableRow>
   );
 }
