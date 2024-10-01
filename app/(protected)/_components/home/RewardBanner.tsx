@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Gift, Sparkles } from "lucide-react";
 import { REWARD_BANNER } from "@/app/constants";
+import Link from "next/link";
 
 const RewardBanner: React.FC = () => {
   return (
@@ -19,9 +20,11 @@ const RewardBanner: React.FC = () => {
             <p className="text-sm opacity-90">{REWARD_BANNER.DESCRIPTION}</p>
           </div>
         </div>
-        <Button variant="secondary" className="whitespace-nowrap ml-4">
-          {REWARD_BANNER.BUTTON_TEXT}
-        </Button>
+        <Link href="/customer/rewards">
+          <Button variant="secondary" className="whitespace-nowrap ml-4">
+            {REWARD_BANNER.BUTTON_TEXT}
+          </Button>
+        </Link>
       </CardContent>
     </Card>
   );
