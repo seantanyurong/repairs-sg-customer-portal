@@ -12,11 +12,16 @@ const addJob = async (job: {
   schedule: string;
   description: string;
   serviceId: string;
+  price: number;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
   const user = await currentUser();
 
   if (!user) return { message: 'Error', errors: 'User Not Found' };
 
+  // Add price to description
+  job.description += `\n\nPrice: $${job.price}`;
+
+  // Create Schedule
   const scheduleSchema = z.object({
     timeStart: z.date(),
     timeEnd: z.date(),
@@ -36,8 +41,7 @@ const addJob = async (job: {
   const newSchedule = new Schedule(scheduleResponse.data);
   newSchedule.save();
 
-  console.log('SCHEDULE', job.schedule);
-
+  // Create Job
   const jobSchema = z.object({
     quantity: z.number(),
     jobAddress: z.string(),
