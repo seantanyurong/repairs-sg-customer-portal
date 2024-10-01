@@ -48,6 +48,7 @@ const formSchema = z.object({
 export default function BookingClient({ service }: { service: any }) {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
+  const [priceQty, setPriceQty] = useState(1);
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
   const pathname = usePathname();
@@ -93,6 +94,17 @@ export default function BookingClient({ service }: { service: any }) {
 
   const scheduleOptions = generateScheduleOptions();
 
+  const itemPrice =
+    service.price -
+    (service.price * (priceQty - 1) * service.volumeDiscountPercentage) / 100;
+  const itemPriceRounded = Math.round(itemPrice * 100) / 100;
+  const subtotalPrice = itemPrice * priceQty;
+  const subtotalPriceRounded = Math.round(subtotalPrice * 100) / 100;
+  const gstPrice = 0.09 * itemPrice * priceQty;
+  const gstPriceRounded = Math.round(gstPrice * 100) / 100;
+  const totalPrice = subtotalPrice + gstPrice;
+  const totalPriceRounded = Math.round(totalPrice * 100) / 100;
+
   const onSubmit = async () => {
     setMessage("");
     setErrors({});
@@ -100,6 +112,7 @@ export default function BookingClient({ service }: { service: any }) {
     const result = await addJob({
       ...formValues,
       serviceId: service._id.toString(),
+      price: totalPriceRounded,
     });
     if (result?.errors) {
       setMessage(result.message);
@@ -296,9 +309,10 @@ export default function BookingClient({ service }: { service: any }) {
                                 min="1"
                                 placeholder="Enter quantity"
                                 {...field}
-                                onChange={(event) =>
-                                  field.onChange(+event.target.value)
-                                }
+                                onChange={(event) => {
+                                  field.onChange(+event.target.value);
+                                  setPriceQty(+event.target.value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -410,30 +424,25 @@ export default function BookingClient({ service }: { service: any }) {
                   <ul className="grid gap-3">
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">
-                        Glimmer Lamps x <span>2</span>
+                        {service.name} x <span>{priceQty}</span> ($
+                        {itemPriceRounded} / service)
                       </span>
-                      <span>$250.00</span>
-                    </li>
-                    <li className="flex items-center justify-between">
-                      <span className="text-muted-foreground">
-                        Aqua Filters x <span>1</span>
-                      </span>
-                      <span>$49.00</span>
+                      <span>${subtotalPriceRounded}</span>
                     </li>
                   </ul>
                   <Separator className="my-2" />
                   <ul className="grid gap-3">
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>$299.00</span>
+                      <span>${subtotalPriceRounded}</span>
                     </li>
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">GST</span>
-                      <span>$25.00</span>
+                      <span>${gstPriceRounded}</span>
                     </li>
                     <li className="flex items-center justify-between font-semibold">
                       <span className="text-muted-foreground">Total</span>
-                      <span>$329.00</span>
+                      <span>${totalPriceRounded}</span>
                     </li>
                   </ul>
                 </div>
