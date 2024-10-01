@@ -29,6 +29,7 @@ const formSchema = z.object({
 export default function BookingClient({ service }: { service: any }) {
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+  const [priceQty, setPriceQty] = useState(1);
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
   const pathname = usePathname();
@@ -87,6 +88,8 @@ export default function BookingClient({ service }: { service: any }) {
       router.push('/customer/services');
     }
   };
+
+  const price = service.price - (service.price * (priceQty - 1) * service.volumeDiscountPercentage) / 100;
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -237,7 +240,10 @@ export default function BookingClient({ service }: { service: any }) {
                                 min='1'
                                 placeholder='Enter quantity'
                                 {...field}
-                                onChange={(event) => field.onChange(+event.target.value)}
+                                onChange={(event) => {
+                                  field.onChange(+event.target.value);
+                                  setPriceQty(+event.target.value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -340,30 +346,25 @@ export default function BookingClient({ service }: { service: any }) {
                   <ul className='grid gap-3'>
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>
-                        Glimmer Lamps x <span>2</span>
+                        {service.name} x <span>{priceQty}</span> ($
+                        {Math.round(price * 100) / 100} / service)
                       </span>
-                      <span>$250.00</span>
-                    </li>
-                    <li className='flex items-center justify-between'>
-                      <span className='text-muted-foreground'>
-                        Aqua Filters x <span>1</span>
-                      </span>
-                      <span>$49.00</span>
+                      <span>${Math.round(priceQty * price * 100) / 100}</span>
                     </li>
                   </ul>
                   <Separator className='my-2' />
                   <ul className='grid gap-3'>
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>Subtotal</span>
-                      <span>$299.00</span>
+                      <span>${Math.round(priceQty * price * 100) / 100}</span>
                     </li>
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>GST</span>
-                      <span>$25.00</span>
+                      <span>${Math.round(0.09 * priceQty * price * 100) / 100}</span>
                     </li>
                     <li className='flex items-center justify-between font-semibold'>
                       <span className='text-muted-foreground'>Total</span>
-                      <span>$329.00</span>
+                      <span>${Math.round(priceQty * price * 100 + 0.09 * priceQty * price * 100) / 100}</span>
                     </li>
                   </ul>
                 </div>
