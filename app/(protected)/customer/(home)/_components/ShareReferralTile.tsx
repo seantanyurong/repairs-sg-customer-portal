@@ -5,12 +5,20 @@ import { Share, SparklesIcon } from "lucide-react";
 import { SHARE_REFERRAL } from "../constants";
 import { useState } from "react";
 import ShareModal from "@/app/(protected)/_components/share/ShareModal";
+import { useUser } from "@clerk/nextjs";
+import GenerateReferralCodeTile from "./GenerateReferralCodeTile";
 
-const ShareReferralTile: React.FC = () => {
+export default function ShareReferralTile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const { user } = useUser();
+  const referralCode = user?.unsafeMetadata.referralCode as string;
+
+  console.log("hi");
+  console.log(referralCode);
 
   return (
     <div className="relative w-full mx-auto mt-8">
@@ -41,11 +49,17 @@ const ShareReferralTile: React.FC = () => {
             {SHARE_REFERRAL.SHARE}
           </Button>
 
-          {isModalOpen && <ShareModal onClose={closeModal} />}
+          {isModalOpen &&
+            (referralCode ? (
+              <ShareModal onClose={closeModal} />
+            ) : (
+              <GenerateReferralCodeTile
+                referralCode={referralCode}
+                onClose={closeModal}
+              />
+            ))}
         </div>
       </div>
     </div>
   );
-};
-
-export default ShareReferralTile;
+}

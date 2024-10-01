@@ -15,3 +15,9 @@ export const SHARE_MODAL = {
   REFERRAL_TEXT: (referralCode: string) =>
     `Hey there! 👋🏻 I'd love to invite you to experience Repair.sg's cleaning and maintenance services! Unlock $15 off on your first booking with my special code: ${referralCode}. A treat just for you! 🎁`,
 } as const;
+
+export const GENERATE_REFERRAL = {
+  TITLE: "Buddy Bonus!",
+  SUBTITLE: "You don't have a referral code.",
+  BUTTON_TEXT: "Generate now",
+} as const;
