@@ -22,7 +22,8 @@ import {
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import Loading from "./loading";
 
 export default function PublicLayout({
   children,
@@ -269,5 +270,9 @@ export default function PublicLayout({
     );
   }
 
-  return <Header />;
+  return (
+    <Suspense fallback={<Loading />}>
+      <Header />
+    </Suspense>
+  );
 }

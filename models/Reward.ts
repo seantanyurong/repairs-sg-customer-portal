@@ -18,12 +18,12 @@ const rewardSchema = new mongoose.Schema(
       required: [true, "Reward Status Is Required"],
       default: "ACTIVE",
     },
-    type: {
-      type: String,
-      enum: ["REFERRAL"],
-      required: [true, "Reward Type Is Required"],
-      default: "REFERRAL",
-    },
+    // type: {
+    //   type: String,
+    //   enum: ["REFERRAL"],
+    //   required: [true, "Reward Type Is Required"],
+    //   default: "REFERRAL",
+    // },
     amount: {
       type: Number,
       required: [true, "Reward Amount Is Required"],
