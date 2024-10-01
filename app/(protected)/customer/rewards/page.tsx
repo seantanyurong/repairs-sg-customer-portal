@@ -1,5 +1,5 @@
 import { getRewardsByUserId } from "@/lib/actions/rewards";
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 import {
   Card,
@@ -24,10 +24,6 @@ export default async function Rewards() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId;
   const rewards = await getRewardsByUserId(userId as string);
-  const users = await clerkClient().users.getUserList();
-  const referralCodes = users.data.map(
-    (user) => user.unsafeMetadata.referralCode
-  );
 
   const rewardDisplay = (status?: string) => {
     if (status === "all") {
@@ -131,7 +127,7 @@ export default async function Rewards() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ReferralCode referralCodes={referralCodes as string[]} />
+            <ReferralCode />
           </CardContent>
         </Card>
       </div>
