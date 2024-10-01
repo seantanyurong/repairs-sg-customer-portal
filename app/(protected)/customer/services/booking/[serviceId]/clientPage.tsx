@@ -72,11 +72,20 @@ export default function BookingClient({ service }: { service: any }) {
 
   const scheduleOptions = generateScheduleOptions();
 
+  const itemPrice = service.price - (service.price * (priceQty - 1) * service.volumeDiscountPercentage) / 100;
+  const itemPriceRounded = Math.round(itemPrice * 100) / 100;
+  const subtotalPrice = itemPrice * priceQty;
+  const subtotalPriceRounded = Math.round(subtotalPrice * 100) / 100;
+  const gstPrice = 0.09 * itemPrice * priceQty;
+  const gstPriceRounded = Math.round(gstPrice * 100) / 100;
+  const totalPrice = subtotalPrice + gstPrice;
+  const totalPriceRounded = Math.round(totalPrice * 100) / 100;
+
   const onSubmit = async () => {
     setMessage('');
     setErrors({});
     const formValues = form.getValues();
-    const result = await addJob({ ...formValues, serviceId: service._id.toString() });
+    const result = await addJob({ ...formValues, serviceId: service._id.toString(), price: totalPriceRounded });
     if (result?.errors) {
       setMessage(result.message);
       setErrors(result.errors);
@@ -88,8 +97,6 @@ export default function BookingClient({ service }: { service: any }) {
       router.push('/customer/services');
     }
   };
-
-  const price = service.price - (service.price * (priceQty - 1) * service.volumeDiscountPercentage) / 100;
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -347,24 +354,24 @@ export default function BookingClient({ service }: { service: any }) {
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>
                         {service.name} x <span>{priceQty}</span> ($
-                        {Math.round(price * 100) / 100} / service)
+                        {itemPriceRounded} / service)
                       </span>
-                      <span>${Math.round(priceQty * price * 100) / 100}</span>
+                      <span>${subtotalPriceRounded}</span>
                     </li>
                   </ul>
                   <Separator className='my-2' />
                   <ul className='grid gap-3'>
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>Subtotal</span>
-                      <span>${Math.round(priceQty * price * 100) / 100}</span>
+                      <span>${subtotalPriceRounded}</span>
                     </li>
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>GST</span>
-                      <span>${Math.round(0.09 * priceQty * price * 100) / 100}</span>
+                      <span>${gstPriceRounded}</span>
                     </li>
                     <li className='flex items-center justify-between font-semibold'>
                       <span className='text-muted-foreground'>Total</span>
-                      <span>${Math.round(priceQty * price * 100 + 0.09 * priceQty * price * 100) / 100}</span>
+                      <span>${totalPriceRounded}</span>
                     </li>
                   </ul>
                 </div>
