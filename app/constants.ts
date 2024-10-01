@@ -11,3 +11,9 @@ export const NAVIGATION_LABELS = {
   REWARDS: "Rewards",
   SETTINGS: "Settings",
 } as const;
+
+export const REWARD_BANNER = {
+  TITLE: "Claim your reward!",
+  DESCRIPTION: "Check out vouchers and discounts exclusively just for you!",
+  BUTTON_TEXT: "See My Rewards",
+} as const;
