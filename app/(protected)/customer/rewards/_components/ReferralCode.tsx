@@ -10,7 +10,10 @@ export default function ReferralCode({
 }: {
   referralCodes: string[];
 }) {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
+  if (!isLoaded || !isSignedIn || !user) {
+    return null;
+  }
   const referralCode = user?.unsafeMetadata.referralCode;
   const generateReferralCode = async () => {
     let newReferralCode = "";
@@ -39,30 +42,34 @@ export default function ReferralCode({
     }
   };
 
-  return referralCode ? (
-    <Button
-      variant="outline"
-      onClick={() => {
-        handleCopy();
-        toast("Referral code copied to clipboard");
-      }}
-      className="w-full h-auto"
-    >
-      <div className="flex flex-row lg:flex-col 2xl:flex-row items-center justify-between w-full">
-        <p className="flex font-bold text-lg">{referralCode as string}</p>
-        <p className="flex text-xs text-muted-foreground">Click to copy</p>
-      </div>
-    </Button>
-  ) : (
-    <Button
-      variant="default"
-      onClick={() => {
-        generateReferralCode();
-        toast("Referral code successfully generated");
-      }}
-      className="w-full h-auto"
-    >
-      <p className="text-wrap">Generate Referral Code</p>
-    </Button>
-  );
+  const referralCodeDisplay = () => {
+    return referralCode ? (
+        <Button
+          variant="outline"
+          onClick={() => {
+            handleCopy();
+            toast("Referral code copied to clipboard");
+          }}
+          className="w-full h-auto"
+        >
+          <div className="flex flex-row lg:flex-col 2xl:flex-row items-center justify-between w-full">
+            <p className="flex font-bold text-lg">{referralCode as string}</p>
+            <p className="flex text-xs text-muted-foreground">Click to copy</p>
+          </div>
+        </Button>
+    ) : (
+      <Button
+        variant="default"
+        onClick={() => {
+          generateReferralCode();
+          toast("Referral code successfully generated");
+        }}
+        className="w-full h-auto"
+      >
+        <p className="text-wrap">Generate Referral Code</p>
+      </Button>
+    );
+  };
+
+  return <>{referralCodeDisplay()}</>;
 }
