@@ -9,7 +9,7 @@ const addReward = async (reward: {
   rewardCode: string;
   userId: string;
   status: string;
-  type: string;
+  // type: string;
   amount: number;
   expiryDate: string;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
@@ -17,7 +17,7 @@ const addReward = async (reward: {
     rewardCode: z.string().min(1),
     userId: z.string().min(1),
     status: z.enum(["ACTIVE", "CLAIMED", "EXPIRED"]),
-    type: z.enum(["REFERRAL"]),
+    // type: z.enum(["REFERRAL"]),
     amount: z.number(),
     expiryDate: z.string(),
   });
@@ -26,7 +26,7 @@ const addReward = async (reward: {
     rewardCode: reward.rewardCode,
     userId: reward.userId,
     status: reward.status,
-    type: reward.type,
+    // type: reward.type,
     amount: reward.amount,
     expiryDate: reward.expiryDate,
   });
@@ -46,7 +46,7 @@ const updateReward = async (reward: {
   rewardCode: string;
   userId: string;
   status: string;
-  type: string;
+  // type: string;
   amount: number;
   expiryDate: string;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
@@ -55,7 +55,7 @@ const updateReward = async (reward: {
     rewardCode: z.string().min(1),
     userId: z.string().min(1),
     status: z.enum(["ACTIVE", "CLAIMED", "EXPIRED"]),
-    type: z.enum(["REFERRAL"]),
+    // type: z.enum(["REFERRAL"]),
     amount: z.number(),
     expiryDate: z.string(),
   });
@@ -65,7 +65,7 @@ const updateReward = async (reward: {
     rewardCode: reward.rewardCode,
     userId: reward.userId,
     status: reward.status,
-    type: reward.type,
+    // type: reward.type,
     amount: reward.amount,
     expiryDate: reward.expiryDate,
   });
@@ -79,7 +79,7 @@ const updateReward = async (reward: {
     rewardCode: response.data.rewardCode,
     status: response.data.status,
     userId: response.data.userId,
-    type: response.data.type,
+    // type: response.data.type,
     amount: response.data.amount,
     expiryDate: response.data.expiryDate,
   };
