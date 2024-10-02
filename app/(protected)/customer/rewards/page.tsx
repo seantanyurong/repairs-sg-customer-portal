@@ -24,14 +24,34 @@ export default async function Rewards() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId;
   const rewards = await getRewardsByUserId(userId as string);
+  const sortedRewards = rewards.sort((a, b) => {
+    if (new Date(a.expiryDate) < new Date()) {
+      a.status = "EXPIRED";
+    }
+    if (new Date(b.expiryDate) < new Date()) {
+      b.status = "EXPIRED";
+    }
+    if (
+      (a.status === "ACTIVE" || a.status === "CLAIMED") &&
+      b.status === "EXPIRED"
+    ) {
+      return -1;
+    } else if (
+      (b.status === "ACTIVE" || b.status === "CLAIMED") &&
+      a.status === "EXPIRED"
+    ) {
+      return 1;
+    }
+    return new Date(a.expiryDate).getTime() - new Date(b.expiryDate).getTime();
+  });
 
   const rewardDisplay = (status?: string) => {
     if (status === "all") {
-      return rewards.map((reward) => {
+      return sortedRewards.map((reward) => {
         return (
           <RewardRow
             key={reward._id.toString()}
-            // id={reward._id.toString()}
+            id={reward._id.toString()}
             rewardCode={reward.rewardCode}
             status={reward.status}
             // type={reward.type}
@@ -43,13 +63,13 @@ export default async function Rewards() {
     }
 
     // Filter by status
-    return rewards
+    return sortedRewards
       .filter((reward) => reward.status.toLowerCase() === status)
       .map((reward) => {
         return (
           <RewardRow
             key={reward._id.toString()}
-            // id={reward._id.toString()}
+            id={reward._id.toString()}
             rewardCode={reward.rewardCode}
             status={reward.status}
             // type={reward.type}

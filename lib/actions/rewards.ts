@@ -43,21 +43,20 @@ const addReward = async (reward: {
 
 const updateReward = async (reward: {
   _id: string;
-  rewardCode: string;
-  userId: string;
-  status: string;
-  // type: string;
-  amount: number;
-  expiryDate: string;
+  rewardCode?: string;
+  userId?: string;
+  status?: string;
+  amount?: number;
+  expiryDate?: string;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
   const rewardSchema = z.object({
     _id: z.string().min(1),
-    rewardCode: z.string().min(1),
-    userId: z.string().min(1),
-    status: z.enum(["ACTIVE", "CLAIMED", "EXPIRED"]),
+    rewardCode: z.string().min(1).optional(),
+    userId: z.string().min(1).optional(),
+    status: z.enum(["ACTIVE", "CLAIMED", "EXPIRED"]).optional(),
     // type: z.enum(["REFERRAL"]),
-    amount: z.number(),
-    expiryDate: z.string(),
+    amount: z.number().optional(),
+    expiryDate: z.string().optional(),
   });
 
   const response = rewardSchema.safeParse({
@@ -65,7 +64,6 @@ const updateReward = async (reward: {
     rewardCode: reward.rewardCode,
     userId: reward.userId,
     status: reward.status,
-    // type: reward.type,
     amount: reward.amount,
     expiryDate: reward.expiryDate,
   });
