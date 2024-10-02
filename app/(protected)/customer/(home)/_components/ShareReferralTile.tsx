@@ -17,9 +17,6 @@ export default function ShareReferralTile() {
   const { user } = useUser();
   const referralCode = user?.unsafeMetadata.referralCode as string;
 
-  console.log("hi");
-  console.log(referralCode);
-
   return (
     <div className="relative w-full mx-auto mt-8">
       {/* Banner container */}
