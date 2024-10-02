@@ -1,22 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { XIcon } from "lucide-react";
 import { GENERATE_REFERRAL } from "../constants";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface GenerateReferralCodeTileProps {
-  referralCode: string;
   onClose: () => void;
 }
 
 const GenerateReferralCodeTile: React.FC<GenerateReferralCodeTileProps> = ({
-  referralCode,
   onClose,
 }) => {
   return (

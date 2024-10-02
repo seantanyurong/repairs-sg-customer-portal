@@ -53,10 +53,7 @@ export default function ShareReferralTile() {
             (referralCode ? (
               <ShareModal onClose={closeModal} />
             ) : (
-              <GenerateReferralCodeTile
-                referralCode={referralCode}
-                onClose={closeModal}
-              />
+              <GenerateReferralCodeTile onClose={closeModal} />
             ))}
         </div>
       </div>
