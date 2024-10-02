@@ -15,12 +15,12 @@ import {
 import JobRow from "./JobRow";
 import { clerkClient } from "@clerk/nextjs/server";
 import { getJobsForSchedule } from "@/lib/actions/jobs";
-import { getServices } from "@/lib/actions/services";
+// import { getServices } from "@/lib/actions/services";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function JobTable() {
-  const services = await getServices();
+  //   const services = await getServices();
 
   const jobs = await getJobsForSchedule();
   console.log(jobs);
