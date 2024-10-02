@@ -1,6 +1,7 @@
 import ShareReferralTile from "./(home)/_components/ShareReferralTile";
 import RewardBanner from "../_components/home/RewardBanner";
 import JobsPage from "./services/page";
+import JobTable from "./(home)/_components/JobTable";
 
 export default function CustomerHome() {
   return (
@@ -15,6 +16,10 @@ export default function CustomerHome() {
 
       <div className="p-4">
         <RewardBanner />
+      </div>
+
+      <div className="p-4">
+        <JobTable />
       </div>
     </div>
   );
