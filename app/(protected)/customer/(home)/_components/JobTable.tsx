@@ -40,11 +40,8 @@ export default async function JobTable() {
               serviceName={job.service.name}
               description={job.description}
               address={job.jobAddress}
-              // staffName={job.staff.fullName}
-              staffName="Staff Name"
               timeStart={job.schedule.timeStart.toLocaleString("en-GB")}
               timeEnd={job.schedule.timeEnd.toLocaleString("en-GB")}
-              status={job.status}
             />
           );
         })
@@ -86,10 +83,8 @@ export default async function JobTable() {
                 <TableHead>Service</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Address</TableHead>
-                <TableHead>Staff</TableHead>
                 <TableHead>Start</TableHead>
                 <TableHead>End</TableHead>
-                <TableHead>Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>{jobTableDisplay()}</TableBody>

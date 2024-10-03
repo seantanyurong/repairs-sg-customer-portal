@@ -1,37 +1,28 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function JobRow({
   serviceName,
   description,
   address,
-  staffName,
   timeStart,
   timeEnd,
-  status,
 }: {
   id: string;
   serviceName: string;
   description: string;
   address: string;
-  staffName: string;
   timeStart: string;
   timeEnd: string;
-  status: string;
 }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{serviceName}</TableCell>
       <TableCell className="font-medium">{description}</TableCell>
       <TableCell className="font-medium">{address}</TableCell>
-      <TableCell className="font-medium">{staffName}</TableCell>
       <TableCell className="font-medium">{timeStart}</TableCell>
       <TableCell className="font-medium">{timeEnd}</TableCell>
-      <TableCell>
-        <Badge variant="outline">{status}</Badge>
-      </TableCell>
       <TableCell>
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
