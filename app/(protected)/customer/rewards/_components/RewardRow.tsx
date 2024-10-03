@@ -3,20 +3,43 @@
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
+import RewardDetail from "./RewardDetail";
+import { useCallback, useEffect } from "react";
+import { updateReward } from "@/lib/actions/rewards";
 
 export default function RewardRow({
-  // id,
+  id,
   rewardCode,
   status,
   amount,
   expiryDate,
 }: {
-  // id: string;
+  id: string;
   rewardCode: string;
   status: string;
   amount: number;
   expiryDate: string;
 }) {
+  // Change the status to "EXPIRED" if the expiry date is before today
+  const updateRewardStatus = useCallback(async (rewardId: string) => {
+    try {
+      const result = await updateReward({
+        _id: rewardId,
+        status: "EXPIRED",
+      });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const expiryDateObj = new Date(expiryDate);
+    if (status === "ACTIVE" && (expiryDateObj < currentDate)) {
+      updateRewardStatus(id);
+    }
+  }, [expiryDate, id, status, updateRewardStatus]);
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
@@ -36,6 +59,15 @@ export default function RewardRow({
         ${amount}
       </TableCell>
       <TableCell className="hidden md:table-cell">{expiryDate}</TableCell>
+      <TableCell>
+        {status === "ACTIVE" && (
+          <RewardDetail
+            rewardCode={rewardCode}
+            amount={amount}
+            expiryDate={expiryDate}
+          />
+        )}
+      </TableCell>
     </TableRow>
   );
 }
