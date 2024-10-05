@@ -61,7 +61,7 @@ export default function RewardDetail({
             <p className="flex text-xs text-muted-foreground">Click to copy</p>
           </div>
         </Button>
-        <div className="flex flex-col gap-2 text-sm">
+        <div className="flex flex-col gap-2 text-sm my-6">
           <p className="font-bold">Terms and Conditions:</p>
           <p>1. Applicable for all Repair.sg services</p>
           <p>2. Cannot be used in conjunction with other promotions</p>
