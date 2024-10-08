@@ -13,6 +13,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export default function JobRow({
+  id,
   serviceName,
   description,
   address,
@@ -49,12 +50,9 @@ export default function JobRow({
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => router.push(`/staff/vehicles/edit-vehicle/${'placeholder'}`)}
+                onClick={() => router.push(`/customer/jobs/job-details/${id}`)}
                 className='cursor-pointer'>
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => console.log('test')} className='cursor-pointer'>
-                Delete
+                View Details
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
