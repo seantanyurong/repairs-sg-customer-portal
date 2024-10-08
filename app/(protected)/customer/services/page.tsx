@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import ServiceRow from './_components/ServiceRow';
 
-export default async function JobsPage() {
+export default async function ServicesPage() {
   const services = await getServices();
 
   const serviceDisplay = () => {
