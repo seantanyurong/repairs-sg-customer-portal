@@ -91,4 +91,52 @@ const deleteJob = async (jobId: string) => {
   revalidatePath('/customer/jobs');
 };
 
-export { addJob, getJobsForSchedule, getJob, deleteJob };
+const updateJob = async (job: {
+  schedule: string;
+  jobId: string;
+}): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
+  const user = await currentUser();
+
+  if (!user) return { message: 'Error', errors: 'User Not Found' };
+
+  // Create Schedule
+  const scheduleSchema = z.object({
+    timeStart: z.date(),
+    timeEnd: z.date(),
+  });
+
+  const formattedSchedule = JSON.parse(job.schedule);
+
+  const scheduleResponse = scheduleSchema.safeParse({
+    timeStart: new Date(formattedSchedule.timeStart),
+    timeEnd: new Date(formattedSchedule.timeEnd),
+  });
+
+  if (!scheduleResponse.success) {
+    return {
+      message: 'Error',
+      errors: scheduleResponse.error.flatten().fieldErrors,
+    };
+  }
+
+  const newSchedule = new Schedule(scheduleResponse.data);
+  newSchedule.save();
+
+  const jobSchema = z.object({
+    schedule: z.instanceof(ObjectId),
+  });
+
+  const response = jobSchema.safeParse({
+    schedule: newSchedule._id,
+  });
+
+  if (!response.success) {
+    return { message: 'Error', errors: response.error.flatten().fieldErrors };
+  }
+
+  await Job.findByIdAndUpdate(job.jobId, response.data);
+
+  return { message: 'Job updated successfully' };
+};
+
+export { addJob, getJobsForSchedule, getJob, deleteJob, updateJob };

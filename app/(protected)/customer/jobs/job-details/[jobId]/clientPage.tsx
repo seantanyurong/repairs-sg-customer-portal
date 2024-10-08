@@ -1,9 +1,20 @@
 'use client';
 
+import * as z from 'zod';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { deleteJob } from '@/lib/actions/jobs';
+import { format, addHours, startOfDay, addDays, isAfter } from 'date-fns';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SelectValue, SelectTrigger, SelectContent, SelectItem, Select } from '@/components/ui/select';
+import { updateJob } from '@/lib/actions/jobs';
+
+const formSchema = z.object({
+  schedule: z.string(),
+});
 
 export default function JobDetailsClient({
   job,
@@ -24,6 +35,55 @@ export default function JobDetailsClient({
     const confirmed = window.confirm('Are you sure you want to delete this job booking?');
     if (confirmed) {
       await deleteJob(job._id);
+      router.push('/customer/jobs');
+    }
+  };
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
+  });
+
+  // Function to generate 2-hour intervals for the next 3 days
+  const generateScheduleOptions = () => {
+    const options = [];
+    const startDate = addDays(new Date(), 1); // Start from tomorrow
+    const endDate = addDays(startDate, 3); // Up to 3 days from tomorrow
+
+    let currentDate = startOfDay(startDate); // Start at 00:00 tomorrow
+    while (isAfter(endDate, currentDate)) {
+      // Create time slots from 10:00 to 20:00 each day
+      for (let hour = 10; hour < 20; hour += 2) {
+        const startTime = addHours(startOfDay(currentDate), hour);
+        const endTime = addHours(startTime, 2);
+
+        options.push({
+          value: JSON.stringify({
+            timeStart: format(startTime, "yyyy-MM-dd'T'HH:mm:ss"),
+            timeEnd: format(endTime, "yyyy-MM-dd'T'HH:mm:ss"),
+          }), // Pass both start and end time in the value
+          label: format(startTime, 'MMMM d, yyyy HH:mm') + ' - ' + format(endTime, 'HH:mm'),
+        });
+      }
+      currentDate = addDays(currentDate, 1); // Move to the next day
+    }
+
+    return options;
+  };
+
+  const scheduleOptions = generateScheduleOptions();
+
+  const onSubmit = async () => {
+    const formValues = form.getValues();
+    const result = await updateJob({
+      ...formValues,
+      jobId: job._id.toString(),
+    });
+    if (result?.errors) {
+      return;
+    } else {
+      router.refresh();
+      form.reset(form.getValues());
       router.push('/customer/jobs');
     }
   };
@@ -73,7 +133,44 @@ export default function JobDetailsClient({
                 <CardDescription>Make changes to your job booking.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className='w-full mb-4' onClick={handleDelete}>
+                <Form {...form}>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      form.handleSubmit(onSubmit)();
+                    }}
+                    className='w-full flex flex-col gap-4'>
+                    {/* Schedules Field */}
+                    <FormField
+                      control={form.control}
+                      name='schedule'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Booking Timing</FormLabel>
+                          <Select onValueChange={field.onChange}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder='Select a schedule' />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {scheduleOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type='submit' className='w-full mb-4'>
+                      Update Booking Timing
+                    </Button>
+                  </form>
+                </Form>
+                <Button className='w-full mb-4' variant={'destructive'} onClick={handleDelete}>
                   Cancel Booking
                 </Button>
               </CardContent>
