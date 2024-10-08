@@ -5,6 +5,7 @@ import Schedule from '@/models/Schedule';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { currentUser } from '@clerk/nextjs/server';
+import { revalidatePath } from 'next/cache';
 
 const addJob = async (job: {
   quantity: number;
@@ -85,4 +86,9 @@ const getJob = async (jobId: string) => {
   return job;
 };
 
-export { addJob, getJobsForSchedule, getJob };
+const deleteJob = async (jobId: string) => {
+  await Job.findByIdAndDelete(jobId);
+  revalidatePath('/customer/jobs');
+};
+
+export { addJob, getJobsForSchedule, getJob, deleteJob };
