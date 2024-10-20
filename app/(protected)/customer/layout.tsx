@@ -15,15 +15,19 @@ import {
 } from "lucide-react";
 import { NAVIGATION_LABELS } from "../../constants";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Suspense, useState } from "react";
 import Loading from "./loading";
+import Image from "next/image";
 
 export default function PublicLayout({
   children,
@@ -41,130 +45,88 @@ export default function PublicLayout({
   function Header() {
     return (
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        {/* Sidebar */}
-        <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-          <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-            <Link
-              href="/"
-              className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-            >
-              <Home className="h-4 w-4 transition-all group-hover:scale-110" />
-              <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
-            </Link>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/services"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+        {/* Top Nav Bar */}
+        <NavigationMenu className="bg-primary w-full h-16 flex items-center justify-between px-8">
+          <Link href="/customer">
+            <Image
+              src="/images/logo.jpg"
+              alt="Repair.sg Logo"
+              width={90}
+              height={90}
+            />
+          </Link>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/customer/services" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
                     pathname === "/customer/services"
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                      : "bg-primary"
+                  }`}
                 >
-                  <Hammer className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.SERVICES}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.SERVICES}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/jobs"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                  {NAVIGATION_LABELS.SERVICES}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/customer/jobs" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
                     pathname === "/customer/jobs"
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                      : "bg-primary"
+                  }`}
                 >
-                  <BriefcaseBusiness className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.JOBS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.JOBS}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/invoices"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                  {NAVIGATION_LABELS.JOBS}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/customer/invoices" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
                     pathname === "/customer/invoices"
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                      : "bg-primary"
+                  }`}
                 >
-                  <NotepadText className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.INVOICES}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.INVOICES}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/quote"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/quote"
+                  {NAVIGATION_LABELS.INVOICES}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/customer/quotations" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
+                    pathname === "/customer/quotations"
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                      : "bg-primary"
+                  }`}
                 >
-                  <Quote className="h-5 w-5" />
-                  <span className="sr-only">
-                    {NAVIGATION_LABELS.QUOTATIONS}
-                  </span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.QUOTATIONS}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/rewards"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+                  {NAVIGATION_LABELS.QUOTATIONS}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/customer/rewards" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={`${navigationMenuTriggerStyle()} ${
                     pathname === "/customer/rewards"
                       ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
+                      : "bg-primary"
+                  }`}
                 >
-                  <TicketPercent className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.REWARDS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.REWARDS}
-              </TooltipContent>
-            </Tooltip>
-          </nav>
-          <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/settings"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <Settings className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.SETTINGS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.SETTINGS}
-              </TooltipContent>
-            </Tooltip>
-          </nav>
-        </aside>
+                  {NAVIGATION_LABELS.REWARDS}
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
 
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
