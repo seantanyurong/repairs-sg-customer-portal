@@ -21,7 +21,10 @@ const RewardBanner: React.FC = () => {
           </div>
         </div>
         <Link href="/customer/rewards">
-          <Button variant="secondary" className="whitespace-nowrap ml-4">
+          <Button
+            variant="secondary"
+            className="whitespace-nowrap ml-4 text-primary-foreground"
+          >
             {REWARD_BANNER.BUTTON_TEXT}
           </Button>
         </Link>
