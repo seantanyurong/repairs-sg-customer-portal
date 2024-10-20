@@ -24,15 +24,13 @@ export default function ShareReferralTile() {
         {/* Left section with text and icon */}
         <div className="flex items-center space-x-3">
           {/* Sparkles icon */}
-          <div className="text-primary">
+          <div className="text-primary-foreground">
             <SparklesIcon className="h-8 w-8" />
           </div>
           {/* Text content */}
           <div>
-            <p className="text-lg font-bold text-primary">
-              {SHARE_REFERRAL.TITLE}
-            </p>
-            <p className="text-sm text-primary">{SHARE_REFERRAL.SUBTITLE}</p>
+            <p className="text-lg font-bold ">{SHARE_REFERRAL.TITLE}</p>
+            <p className="text-sm">{SHARE_REFERRAL.SUBTITLE}</p>
           </div>
         </div>
 

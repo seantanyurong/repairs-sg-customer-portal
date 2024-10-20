@@ -1,27 +1,37 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import Image from "next/image";
+import Link from "next/link";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
-export default function ServiceRow({ id, name, description }: { id: string; name: string; description: string }) {
+export default function ServiceRow({
+  id,
+  name,
+  description,
+}: {
+  id: string;
+  name: string;
+  description: string;
+}) {
   return (
     <TableRow>
-      <TableCell className='hidden sm:table-cell'>
+      <TableCell className="hidden sm:table-cell">
         <Image
-          alt='Product image'
-          className='aspect-square rounded-md object-cover'
-          height='64'
-          src='/images/placeholder.svg'
-          width='64'
+          alt="Product image"
+          className="aspect-square rounded-md object-cover"
+          height="64"
+          src="/images/placeholder.svg"
+          width="64"
         />
       </TableCell>
-      <TableCell className='font-medium'>{name}</TableCell>
-      <TableCell className='hidden md:table-cell font-medium'>{description}</TableCell>
-      <TableCell className='text-right'>
+      <TableCell className="font-medium">{name}</TableCell>
+      <TableCell className="hidden md:table-cell font-medium">
+        {description}
+      </TableCell>
+      <TableCell className="text-right">
         <Link href={`/customer/services/booking/${id}`}>
-          <Button size={'sm'}>Book Service</Button>
+          <Button size={"sm"}>Book Service</Button>
         </Link>
       </TableCell>
     </TableRow>
