@@ -18,7 +18,7 @@ export default function ShareReferralTile() {
   const referralCode = user?.unsafeMetadata.referralCode as string;
 
   return (
-    <div className="relative w-full mx-auto mt-8">
+    <div className="relative w-full mx-auto mt-2">
       {/* Banner container */}
       <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-green-300 to-yellow-200 shadow-lg">
         {/* Left section with text and icon */}
