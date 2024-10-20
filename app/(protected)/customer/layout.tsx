@@ -14,20 +14,12 @@ import {
   TicketPercent,
 } from "lucide-react";
 import { NAVIGATION_LABELS } from "../../constants";
-import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Suspense, useState } from "react";
 import Loading from "./loading";
-import Image from "next/image";
 
 export default function PublicLayout({
   children,
@@ -45,89 +37,6 @@ export default function PublicLayout({
   function Header() {
     return (
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        {/* Top Nav Bar */}
-        {/* <NavigationMenu className="bg-primary w-full h-16 flex items-center justify-between px-8">
-          <Link href="/customer">
-            <Image
-              src="/images/logo.jpg"
-              alt="Repair.sg Logo"
-              width={90}
-              height={90}
-            />
-          </Link>
-          <NavigationMenuList>
-            <NavigationMenuItem>
-              <Link href="/customer/services" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={`${navigationMenuTriggerStyle()} ${
-                    pathname === "/customer/services"
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-primary"
-                  }`}
-                >
-                  {NAVIGATION_LABELS.SERVICES}
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <Link href="/customer/jobs" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={`${navigationMenuTriggerStyle()} ${
-                    pathname === "/customer/jobs"
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-primary"
-                  }`}
-                >
-                  {NAVIGATION_LABELS.JOBS}
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <Link href="/customer/invoices" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={`${navigationMenuTriggerStyle()} ${
-                    pathname === "/customer/invoices"
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-primary"
-                  }`}
-                >
-                  {NAVIGATION_LABELS.INVOICES}
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <Link href="/customer/quotations" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={`${navigationMenuTriggerStyle()} ${
-                    pathname === "/customer/quotations"
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-primary"
-                  }`}
-                >
-                  {NAVIGATION_LABELS.QUOTATIONS}
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-
-            <NavigationMenuItem>
-              <Link href="/customer/rewards" legacyBehavior passHref>
-                <NavigationMenuLink
-                  className={`${navigationMenuTriggerStyle()} ${
-                    pathname === "/customer/rewards"
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-primary"
-                  }`}
-                >
-                  {NAVIGATION_LABELS.REWARDS}
-                </NavigationMenuLink>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu> */}
-
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             {/* Side Toggle Menu */}
