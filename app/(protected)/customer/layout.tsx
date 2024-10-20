@@ -14,11 +14,7 @@ import {
   TicketPercent,
 } from "lucide-react";
 import { NAVIGATION_LABELS } from "../../constants";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { usePathname } from "next/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -41,131 +37,6 @@ export default function PublicLayout({
   function Header() {
     return (
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        {/* Sidebar */}
-        <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
-          <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-            <Link
-              href="/"
-              className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
-            >
-              <Home className="h-4 w-4 transition-all group-hover:scale-110" />
-              <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
-            </Link>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/services"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/services"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <Hammer className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.SERVICES}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.SERVICES}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/jobs"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/jobs"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <BriefcaseBusiness className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.JOBS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.JOBS}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/invoices"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/invoices"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <NotepadText className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.INVOICES}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.INVOICES}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/quote"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/quote"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <Quote className="h-5 w-5" />
-                  <span className="sr-only">
-                    {NAVIGATION_LABELS.QUOTATIONS}
-                  </span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.QUOTATIONS}
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="/customer/rewards"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/customer/rewards"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <TicketPercent className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.REWARDS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.REWARDS}
-              </TooltipContent>
-            </Tooltip>
-          </nav>
-          <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="#"
-                  className={`flex h-9 w-9 items-center justify-center rounded-lg ${
-                    pathname === "/settings"
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground"
-                  } transition-colors hover:text-foreground md:h-8 md:w-8`}
-                >
-                  <Settings className="h-5 w-5" />
-                  <span className="sr-only">{NAVIGATION_LABELS.SETTINGS}</span>
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                {NAVIGATION_LABELS.SETTINGS}
-              </TooltipContent>
-            </Tooltip>
-          </nav>
-        </aside>
-
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             {/* Side Toggle Menu */}

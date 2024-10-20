@@ -18,21 +18,19 @@ export default function ShareReferralTile() {
   const referralCode = user?.unsafeMetadata.referralCode as string;
 
   return (
-    <div className="relative w-full mx-auto mt-8">
+    <div className="relative w-full mx-auto mt-2">
       {/* Banner container */}
       <div className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-r from-green-300 to-yellow-200 shadow-lg">
         {/* Left section with text and icon */}
         <div className="flex items-center space-x-3">
           {/* Sparkles icon */}
-          <div className="text-primary">
+          <div className="text-primary-foreground">
             <SparklesIcon className="h-8 w-8" />
           </div>
           {/* Text content */}
           <div>
-            <p className="text-lg font-bold text-primary">
-              {SHARE_REFERRAL.TITLE}
-            </p>
-            <p className="text-sm text-primary">{SHARE_REFERRAL.SUBTITLE}</p>
+            <p className="text-lg font-bold ">{SHARE_REFERRAL.TITLE}</p>
+            <p className="text-sm">{SHARE_REFERRAL.SUBTITLE}</p>
           </div>
         </div>
 

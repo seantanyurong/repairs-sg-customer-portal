@@ -4,14 +4,8 @@ import localFont from "next/font/local";
 import "./css/globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "sonner";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-} from "@clerk/nextjs";
-import Link from "next/link";
-import CustomerUserButton from "./(protected)/_components/account/CustomerUserButton";
+import { ClerkProvider } from "@clerk/nextjs";
+import Header from "./_components/Header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,33 +25,19 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   connectToMongoDB();
-  function Header() {
 
-    return (
-      <header className="flex justify-end p-4 bg-muted/40">
-        <SignedIn>
-          <CustomerUserButton />
-        </SignedIn>
-        <SignedOut>
-          <Link href="/">Repair.sg</Link>
-          <div className="ml-auto">
-            <SignInButton />
-          </div>
-        </SignedOut>
-      </header>
-    );
-  }
   return (
     <html lang="en">
       <ClerkProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Header /> <Toaster />
+          <Header />
+          <Toaster />
           <TooltipProvider>{children}</TooltipProvider>
         </body>
       </ClerkProvider>
