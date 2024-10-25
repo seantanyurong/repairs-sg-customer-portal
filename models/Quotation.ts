@@ -1,51 +1,53 @@
 import mongoose from "mongoose";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 
 const quotationSchema = new mongoose.Schema(
   {
-    quotationId: {
-      type: Number,
-      required: [true, "Quotation ID Is Required!"],
-      unique: true,
-    },
-    dateCreated: {
+    quotationDate: {
       type: Date,
-      required: [true, "Date Created Is Required!"],
+      required: [true, "Quotation Date Is Required!"],
+    },
+    quotationExpiry: {
+      type: Date,
+      required: [true, "Quotation Expiry Date Is Required!"],
     },
     lineItems: {
       type: Array,
-      required: [true, "Line Items Are Required!"],
-      validate: {
-        validator: (v: string[]) => v.length >= 1,
-        message: "Line Items Should Have At Least 1 Item!",
-      },
+      // required: [true, "Line Items Are Required!"],
+      // validate: {
+      //   validator: (v: string[]) => v.length >= 1,
+      //   message: "Line Items Should Have At Least 1 Item!",
+      // },
     },
     totalAmount: {
       type: Number,
-      required: [true, "Total Amount Is Required!"],
-      min: [0.01, "Total Amount Must Be Greater Than 0!"],
+      // required: [true, "Total Amount Is Required!"],
+      // min: [0.01, "Total Amount Must Be Greater Than 0!"],
     },
-    public_note: {
+    notes: {
       type: String,
-      maxlength: [500, "Public Note Can Have At Most 500 Characters"],
     },
-    private_notes: {
-      type: String,
-      maxlength: [500, "Private Note Can Have At Most 500 Characters"],
-    },
-    filesWithURL: {
-      type: Array,
-    },
-    secret: {
-      type: String,
+    templateInputs: {
+      type: Object,
     },
     status: {
       type: String,
+      enum: ["Draft", "Active", "Accepted", "Declined", "Expired"],
       default: "Draft",
       required: [true, "Quotation Status Is Required!"],
     },
+    customerEmail: {
+      type: String,
+      required: [true, "Customer Email Is Required!"],
+    },
     customer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer",
+      type: String,
+    },
+    declineReason: {
+      type: String,
+    },
+    declineDetails: {
+      type: String,
     },
     job: {
       type: mongoose.Schema.Types.ObjectId,
@@ -68,6 +70,10 @@ const quotationSchema = new mongoose.Schema(
     accept: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Accept",
+    },
+    quoteTemplate: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "QuoteTemplate",
     },
   },
   { versionKey: false, timestamps: true }
