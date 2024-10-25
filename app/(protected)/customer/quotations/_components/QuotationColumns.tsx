@@ -103,7 +103,7 @@ function ActionColumn({ row }: { row: Row<Quotation> }) {
   return (
     <div className="flex gap-2">
       <>
-        <Link href={`/customer/quotation/view/${row.original._id}`}>
+        <Link href={`/customer/quotations/view/${row.original._id}`}>
           <Button>View</Button>
         </Link>
       </>
