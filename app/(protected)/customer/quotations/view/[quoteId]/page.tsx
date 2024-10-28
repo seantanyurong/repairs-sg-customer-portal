@@ -3,6 +3,33 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import QuoteActionsClient from "./_components/QuoteActionsClient";
+import QuoteViewerClient from "./_components/QuoteViewerClient";
+import { getOneQuoteTemplate } from "@/lib/actions/quoteTemplates";
+import { Template } from "@pdfme/common";
+import dayjs from "dayjs";
+
+const updateRequiredField = (
+  schemas: Template["schemas"],
+  quotation: {
+    quotationId: string;
+    quotationDate: Date;
+  }
+) => {
+  schemas.forEach((schema) => {
+    schema.forEach((element) => {
+      element.required = false;
+      switch (element.name) {
+        case "quotation_no":
+          element.content = `Quotation #${quotation.quotationId}`;
+          break;
+        case "quote_date":
+          element.content = dayjs(quotation.quotationDate).format("DD/MM/YYYY");
+          break;
+      }
+    });
+  });
+  return schemas;
+};
 
 const Page = async ({ params }: { params: { quoteId: string } }) => {
   const { userId } = auth();
@@ -10,6 +37,12 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
 
   const quotation = JSON.parse(await getOneQuotation(params.quoteId));
   if (quotation.customer !== userId) redirect("/customer");
+
+  const quoteTemplate = JSON.parse(
+    await getOneQuoteTemplate(quotation.quoteTemplate)
+  );
+
+  updateRequiredField(quoteTemplate.pdfTemplate.schemas, quotation);
 
   const updateQuotationAction = async (
     newStatus: string,
@@ -38,17 +71,17 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
           updateQuotationAction={updateQuotationAction}
         />
       </div>
-      {/* <div className="flex lg:flex-row flex-col gap-2 h-dvh">
-        <QuoteDetailsClient
+      <div className="flex lg:flex-row flex-col gap-2 h-dvh">
+        {/* <QuoteDetailsClient
           quotation={quotation}
           customer={customerDetails}
           updateQuotationAction={submitQuotationAction}
-        />
+        /> */}
         <QuoteViewerClient
-          template={updatedQuoteTemplate}
-          inputs={inputs}
+          template={quoteTemplate.pdfTemplate}
+          inputs={[quotation.templateInputs]}
         />
-      </div> */}
+      </div>
     </>
   );
 };
