@@ -60,7 +60,7 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
   };
 
   return (
-    <>
+    <div className="flex flex-col gap-4 items-center">
       <div className="flex flex-row justify-between items-center shadow-md rounded-md w-full p-4">
         <h2 className="scroll-m-20  pb-2 text-3xl font-semibold tracking-tight first:mt-0">
           Quotation #{quotation.quotationId}
@@ -71,18 +71,11 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
           updateQuotationAction={updateQuotationAction}
         />
       </div>
-      <div className="flex lg:flex-row flex-col gap-2 h-dvh">
-        {/* <QuoteDetailsClient
-          quotation={quotation}
-          customer={customerDetails}
-          updateQuotationAction={submitQuotationAction}
-        /> */}
-        <QuoteViewerClient
-          template={quoteTemplate.pdfTemplate}
-          inputs={[quotation.templateInputs]}
-        />
-      </div>
-    </>
+      <QuoteViewerClient
+        template={quoteTemplate.pdfTemplate}
+        inputs={[quotation.templateInputs]}
+      />
+    </div>
   );
 };
 
