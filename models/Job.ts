@@ -55,8 +55,14 @@ const jobSchema = new mongoose.Schema(
       required: [true, 'Job Status Is Required!'],
     },
     schedule: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Schedule',
+      timeStart: {
+        type: Date,
+        required: [true, 'Start Date Is Required!'],
+      },
+      timeEnd: {
+        type: Date,
+        required: [true, 'End Date Is Required!'],
+      },
     },
   },
   { versionKey: false, timestamps: true },
