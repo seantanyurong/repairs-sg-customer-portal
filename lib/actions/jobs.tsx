@@ -1,7 +1,6 @@
 'use server';
 
 import Job from '@/models/Job';
-import Schedule from '@/models/Schedule';
 import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { currentUser } from '@clerk/nextjs/server';
@@ -22,34 +21,16 @@ const addJob = async (job: {
   // Add price to description
   job.description += `\n\nPrice: $${job.price}`;
 
-  // Create Schedule
-  const scheduleSchema = z.object({
-    timeStart: z.date(),
-    timeEnd: z.date(),
-  });
-
   const formattedSchedule = JSON.parse(job.schedule);
-
-  const scheduleResponse = scheduleSchema.safeParse({
-    timeStart: new Date(formattedSchedule.timeStart),
-    timeEnd: new Date(formattedSchedule.timeEnd),
-  });
-
-  if (!scheduleResponse.success) {
-    return {
-      message: 'Error',
-      errors: scheduleResponse.error.flatten().fieldErrors,
-    };
-  }
-
-  const newSchedule = new Schedule(scheduleResponse.data);
-  newSchedule.save();
 
   // Create Job
   const jobSchema = z.object({
     quantity: z.number(),
     jobAddress: z.string(),
-    schedule: z.instanceof(ObjectId),
+    schedule: z.object({
+      timeStart: z.date(),
+      timeEnd: z.date(),
+    }),
     description: z.string(),
     service: z.instanceof(ObjectId),
     customer: z.string(),
@@ -58,7 +39,10 @@ const addJob = async (job: {
   const response = jobSchema.safeParse({
     quantity: job.quantity,
     jobAddress: job.jobAddress,
-    schedule: newSchedule._id,
+    schedule: {
+      timeStart: new Date(formattedSchedule.timeStart),
+      timeEnd: new Date(formattedSchedule.timeEnd),
+    },
     description: job.description,
     service: new ObjectId(job.serviceId),
     customer: user.id,
@@ -74,14 +58,14 @@ const addJob = async (job: {
   return { message: 'Job booked successfully' };
 };
 
-const getJobsForSchedule = async () => {
-  const jobs = await Job.find().populate('schedule').populate('service').exec();
+const getJobsWithService = async () => {
+  const jobs = await Job.find().populate('service').exec();
 
   return jobs;
 };
 
 const getJob = async (jobId: string) => {
-  const job = await Job.findById(jobId).populate('schedule').populate('service').exec();
+  const job = await Job.findById(jobId).populate('service').exec();
 
   return job;
 };
@@ -99,35 +83,20 @@ const updateJob = async (job: {
 
   if (!user) return { message: 'Error', errors: 'User Not Found' };
 
-  // Create Schedule
-  const scheduleSchema = z.object({
-    timeStart: z.date(),
-    timeEnd: z.date(),
-  });
-
   const formattedSchedule = JSON.parse(job.schedule);
 
-  const scheduleResponse = scheduleSchema.safeParse({
-    timeStart: new Date(formattedSchedule.timeStart),
-    timeEnd: new Date(formattedSchedule.timeEnd),
-  });
-
-  if (!scheduleResponse.success) {
-    return {
-      message: 'Error',
-      errors: scheduleResponse.error.flatten().fieldErrors,
-    };
-  }
-
-  const newSchedule = new Schedule(scheduleResponse.data);
-  newSchedule.save();
-
   const jobSchema = z.object({
-    schedule: z.instanceof(ObjectId),
+    schedule: z.object({
+      timeStart: z.date(),
+      timeEnd: z.date(),
+    }),
   });
 
   const response = jobSchema.safeParse({
-    schedule: newSchedule._id,
+    schedule: {
+      timeStart: new Date(formattedSchedule.timeStart),
+      timeEnd: new Date(formattedSchedule.timeEnd),
+    },
   });
 
   if (!response.success) {
@@ -139,4 +108,4 @@ const updateJob = async (job: {
   return { message: 'Job updated successfully' };
 };
 
-export { addJob, getJobsForSchedule, getJob, deleteJob, updateJob };
+export { addJob, getJobsWithService, getJob, deleteJob, updateJob };

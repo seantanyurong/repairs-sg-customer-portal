@@ -1,4 +1,4 @@
-import { getJobsForSchedule } from '@/lib/actions/jobs';
+import { getJobsWithService } from '@/lib/actions/jobs';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import JobRow from './_components/JobRow';
 
 export default async function JobsPage() {
-  const jobs = await getJobsForSchedule();
+  const jobs = await getJobsWithService();
 
   const jobTableDisplay = (status?: string) => {
     const todaysDate = new Date();
