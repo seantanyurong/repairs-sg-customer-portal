@@ -136,18 +136,15 @@ const addInvoice = async (invoice: {
   } catch (error: unknown) {
     if (error instanceof mongoose.Error.ValidationError && error.errors) {
       // Mongoose validation errors (including unique-validator errors)
-      const mongooseErrors = Object.keys(error.errors).reduce(
-        (acc, key) => {
-          const friendlyKey = fieldFriendlyNames[key] || key;
-          const errorMessage = error.errors[key].message.replace(
-            key,
-            friendlyKey,
-          );
-          acc[friendlyKey] = [errorMessage];
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      );
+      const mongooseErrors = Object.keys(error.errors).reduce((acc, key) => {
+        const friendlyKey = fieldFriendlyNames[key] || key;
+        const errorMessage = error.errors[key].message.replace(
+          key,
+          friendlyKey
+        );
+        acc[friendlyKey] = [errorMessage];
+        return acc;
+      }, {} as Record<string, string[]>);
 
       return { message: "Validation Error", errors: mongooseErrors };
     }
@@ -246,18 +243,15 @@ const updateInvoice = async (invoice: {
   } catch (error: unknown) {
     if (error instanceof mongoose.Error.ValidationError && error.errors) {
       // Mongoose validation errors (including unique-validator errors)
-      const mongooseErrors = Object.keys(error.errors).reduce(
-        (acc, key) => {
-          const friendlyKey = fieldFriendlyNames[key] || key;
-          const errorMessage = error.errors[key].message.replace(
-            key,
-            friendlyKey,
-          );
-          acc[friendlyKey] = [errorMessage];
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      );
+      const mongooseErrors = Object.keys(error.errors).reduce((acc, key) => {
+        const friendlyKey = fieldFriendlyNames[key] || key;
+        const errorMessage = error.errors[key].message.replace(
+          key,
+          friendlyKey
+        );
+        acc[friendlyKey] = [errorMessage];
+        return acc;
+      }, {} as Record<string, string[]>);
 
       return { message: "Validation Error", errors: mongooseErrors };
     }
@@ -277,6 +271,13 @@ const getInvoices = async () => {
     .limit(20)
     .exec();
   return invoices;
+};
+
+const getInvoicesByUser = async (userId: string) => {
+  const userInvoices = await Invoice.find({ customer: userId }).sort({
+    invoiceId: -1,
+  });
+  return userInvoices;
 };
 
 const voidInvoice = async (invoice: {
@@ -320,18 +321,15 @@ const voidInvoice = async (invoice: {
   } catch (error: unknown) {
     if (error instanceof mongoose.Error.ValidationError && error.errors) {
       // Mongoose validation errors (including unique-validator errors)
-      const mongooseErrors = Object.keys(error.errors).reduce(
-        (acc, key) => {
-          const friendlyKey = fieldFriendlyNames[key] || key;
-          const errorMessage = error.errors[key].message.replace(
-            key,
-            friendlyKey,
-          );
-          acc[friendlyKey] = [errorMessage];
-          return acc;
-        },
-        {} as Record<string, string[]>,
-      );
+      const mongooseErrors = Object.keys(error.errors).reduce((acc, key) => {
+        const friendlyKey = fieldFriendlyNames[key] || key;
+        const errorMessage = error.errors[key].message.replace(
+          key,
+          friendlyKey
+        );
+        acc[friendlyKey] = [errorMessage];
+        return acc;
+      }, {} as Record<string, string[]>);
 
       return { message: "Validation Error", errors: mongooseErrors };
     }
@@ -340,4 +338,11 @@ const voidInvoice = async (invoice: {
   }
 };
 
-export { addInvoice, updateInvoice, getInvoice, getInvoices, voidInvoice };
+export {
+  addInvoice,
+  updateInvoice,
+  getInvoice,
+  getInvoices,
+  getInvoicesByUser,
+  voidInvoice,
+};
