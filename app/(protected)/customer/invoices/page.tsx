@@ -29,7 +29,7 @@ export default async function InvoicesPage() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId;
   const invoices: Invoice[] = await getInvoicesByUser(userId as string);
-  console.log("user invoices", invoices);
+  //   console.log("user invoices", invoices);
 
   // Provide a default date if date fields are missing or invalid
   const defaultDate = new Date("1970-01-01T00:00:00Z"); // Default date if missing
@@ -76,22 +76,10 @@ export default async function InvoicesPage() {
   // console.log("serializedInvoices", serializedInvoices);
 
   // Fetch Customer Full Name
-  //   const customer = getCustomerById(userId as string);
-  //   console.log("customer", customer);
-
   const custClerk = createClerkClient({
     secretKey: process.env.CLERK_SECRET_KEY,
   });
   const customer = await custClerk.users.getUser(userId as string);
-  //   const customerMap: CustomerMap = {};
-  console.log("customer", customer.fullName);
-  //   customer.data.forEach((user: User) => {
-  //     customerMap[user.id] = {
-  //       firstName: user.firstName || "",
-  //       lastName: user.lastName || "",
-  //     };
-  //   });
-  //   console.log("custMap", customerMap);
 
   return (
     <Invoices
