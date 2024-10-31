@@ -3,20 +3,6 @@ import { auth } from "@clerk/nextjs/server";
 import { getInvoicesByUser } from "@/lib/actions/invoices";
 import { getPayments } from "@/lib/actions/payments";
 import Invoices from "./_components/Invoices";
-import { getCustomerById } from "@/lib/actions/customers";
-
-interface User {
-  id: string;
-  firstName: string | null;
-  lastName: string | null;
-}
-
-interface CustomerMap {
-  [key: string]: {
-    firstName: string;
-    lastName: string;
-  };
-}
 
 interface Invoice {
   _id: string;
