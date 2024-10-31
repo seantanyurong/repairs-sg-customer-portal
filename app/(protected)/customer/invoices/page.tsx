@@ -1,7 +1,9 @@
 import { createClerkClient } from "@clerk/nextjs/server";
-import { getInvoices } from "@/lib/actions/invoices";
+import { auth } from "@clerk/nextjs/server";
+import { getInvoicesByUser } from "@/lib/actions/invoices";
 import { getPayments } from "@/lib/actions/payments";
 import Invoices from "./_components/Invoices";
+import { getCustomerById } from "@/lib/actions/customers";
 
 interface User {
   id: string;
@@ -37,11 +39,12 @@ export default async function InvoicesPage() {
   const payment = await getPayments();
   console.log("payment", payment);
 
-  // Fetch Invoices
-  const invoices: Invoice[] = await getInvoices();
-  // console.log("invoices", invoices);
+  // Fetch User Invoices
+  const { sessionClaims } = auth();
+  const userId = sessionClaims?.userId;
+  const invoices: Invoice[] = await getInvoicesByUser(userId as string);
+  console.log("user invoices", invoices);
 
-  // TODO: align with KM
   // Provide a default date if date fields are missing or invalid
   const defaultDate = new Date("1970-01-01T00:00:00Z"); // Default date if missing
 
@@ -86,21 +89,28 @@ export default async function InvoicesPage() {
   const serializedInvoices = invoices.map(serializeInvoice);
   // console.log("serializedInvoices", serializedInvoices);
 
-  // Fetch Customers
+  // Fetch Customer Full Name
+  //   const customer = getCustomerById(userId as string);
+  //   console.log("customer", customer);
+
   const custClerk = createClerkClient({
-    secretKey: process.env.CUSTOMER_CLERK_SECRET_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
   });
-  const customers = await custClerk.users.getUserList();
-  const customerMap: CustomerMap = {};
-  customers.data.forEach((user: User) => {
-    customerMap[user.id] = {
-      firstName: user.firstName || "",
-      lastName: user.lastName || "",
-    };
-  });
-  // console.log("custMap", customerMap);
+  const customer = await custClerk.users.getUser(userId as string);
+  //   const customerMap: CustomerMap = {};
+  console.log("customer", customer.fullName);
+  //   customer.data.forEach((user: User) => {
+  //     customerMap[user.id] = {
+  //       firstName: user.firstName || "",
+  //       lastName: user.lastName || "",
+  //     };
+  //   });
+  //   console.log("custMap", customerMap);
 
   return (
-    <Invoices initialInvoices={serializedInvoices} customerMap={customerMap} />
+    <Invoices
+      initialInvoices={serializedInvoices}
+      customerFullName={customer.fullName || ""}
+    />
   );
 }

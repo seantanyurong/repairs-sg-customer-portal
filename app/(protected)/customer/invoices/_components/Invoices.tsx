@@ -52,7 +52,8 @@ interface Invoice {
 
 interface InvoicesProps {
   initialInvoices: Invoice[];
-  customerMap: { [key: string]: { firstName: string; lastName: string } };
+  customerFullName: string;
+  // customerMap: { [key: string]: { firstName: string; lastName: string } };
 }
 
 type ValidityStatus = "active" | "draft" | "void";
@@ -61,8 +62,9 @@ type PaymentMethod = "cash" | "banktransfer" | "paynow" | "unknown";
 
 export default function Invoices({
   initialInvoices,
-  customerMap,
-}: InvoicesProps) {
+  customerFullName,
+}: // customerMap,
+InvoicesProps) {
   const [invoices, setInvoices] = useState<Invoice[]>(initialInvoices);
   const [query, setQuery] = useState<string>("");
 
@@ -130,14 +132,9 @@ export default function Invoices({
       } else {
         // Filter the invoices based on the customer name or invoice ID
         resultInvoices = resultInvoices.filter((invoice) => {
-          const customer = customerMap[invoice.customer];
-          const fullName = customer
-            ? `${customer.firstName} ${customer.lastName}`.toLowerCase()
-            : "unknown";
-
-          // console.log("search", resultInvoices);
+          console.log("search", resultInvoices);
           return (
-            fullName.includes(query.toLowerCase()) ||
+            customerFullName.includes(query.toLowerCase()) ||
             invoice.invoiceId.toString().includes(query.toLowerCase())
           );
         });
@@ -158,7 +155,7 @@ export default function Invoices({
 
       // Filter by payment method
       filteredInvoices = filteredInvoices.filter((invoice) => {
-        if (invoice.payments[0]) {
+        if (invoice.payments[0].paymentMethod) {
           const paymentMethodKey =
             invoice.payments[0].paymentMethod.toLowerCase() as PaymentMethod;
           return paymentMethod[paymentMethodKey];
@@ -166,7 +163,7 @@ export default function Invoices({
           return paymentMethod["unknown"];
         }
       });
-      // console.log("filter", filteredInvoices);
+      console.log("filter", filteredInvoices);
 
       // Sort
       const sortedInvoices = [...filteredInvoices].sort((a, b) => {
@@ -199,7 +196,7 @@ export default function Invoices({
     },
     [
       initialInvoices,
-      customerMap,
+      customerFullName,
       validityStatus,
       paymentStatus,
       paymentMethod,
@@ -216,17 +213,12 @@ export default function Invoices({
   const invoiceDisplay = (validityStatus?: string) => {
     if (validityStatus === "all") {
       return invoices.map((invoice) => {
-        const customer = customerMap[invoice.customer];
-        const fullName = customer
-          ? `${customer.firstName} ${customer.lastName}`
-          : "Unknown";
-
         return (
           <InvoiceRow
             key={invoice._id.toString()}
             invoiceId={invoice.invoiceId.toString()}
             dateIssued={invoice.dateIssued.toString()}
-            customer={fullName}
+            customer={customerFullName}
             totalAmount={invoice.totalAmount.toString()}
             lineItems={invoice.lineItems}
             paymentStatus={invoice.paymentStatus}
@@ -240,17 +232,12 @@ export default function Invoices({
     return invoices
       .filter((invoice) => invoice.validityStatus === validityStatus)
       .map((invoice) => {
-        const customer = customerMap[invoice.customer];
-        const fullName = customer
-          ? `${customer.firstName} ${customer.lastName}`
-          : "Unknown";
-
         return (
           <InvoiceRow
             key={invoice._id.toString()}
             invoiceId={invoice.invoiceId.toString()}
             dateIssued={invoice.dateIssued.toString()}
-            customer={fullName}
+            customer={customerFullName}
             totalAmount={invoice.totalAmount.toString()}
             lineItems={invoice.lineItems}
             paymentStatus={invoice.paymentStatus}
