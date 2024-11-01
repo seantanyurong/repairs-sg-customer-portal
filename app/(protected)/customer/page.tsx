@@ -2,14 +2,12 @@ import ShareReferralTile from "./(home)/_components/ShareReferralTile";
 import RewardBanner from "../_components/home/RewardBanner";
 import JobsPage from "./services/page";
 import JobTable from "./(home)/_components/JobTable";
+import PromotionalVideo from "./(home)/_components/PromotionalVideo";
 
 export default function CustomerHome() {
   return (
     <div>
-      <video controls autoPlay loop playsInline>
-        <source src="/videos/repair.mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <PromotionalVideo />
       <div className="container mx-auto py-2 px-4 lg:px-10">
         <div className="p-4">
           <ShareReferralTile />
