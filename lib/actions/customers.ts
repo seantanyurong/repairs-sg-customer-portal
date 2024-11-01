@@ -4,7 +4,7 @@ import Customers from "@/models/Customer";
 import { createClerkClient } from "@clerk/nextjs/server";
 
 const customerClerk = createClerkClient({
-  secretKey: process.env.CUSTOMER_CLERK_SECRET_KEY as string,
+  secretKey: process.env.CLERK_SECRET_KEY as string,
 });
 
 const getCustomers = async () => {

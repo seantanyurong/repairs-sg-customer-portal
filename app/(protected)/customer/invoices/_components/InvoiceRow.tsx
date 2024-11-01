@@ -79,7 +79,7 @@ export default function InvoiceRow({
         action: {
           label: "View Invoice",
           onClick: () =>
-            router.push(`/staff/invoices/view-invoice/${invoiceId}`),
+            router.push(`/customer/invoices/view-invoice/${invoiceId}`),
         },
       });
     } catch (error) {
@@ -130,7 +130,7 @@ export default function InvoiceRow({
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
                   onClick={() =>
-                    router.push(`/staff/invoices/view-invoice/${invoiceId}`)
+                    router.push(`/customer/invoices/view-invoice/${invoiceId}`)
                   }
                   className="cursor-pointer"
                 >
