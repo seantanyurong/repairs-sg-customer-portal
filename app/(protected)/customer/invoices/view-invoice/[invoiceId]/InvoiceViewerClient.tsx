@@ -1,25 +1,13 @@
 "use client";
 
-import { useUser } from "@clerk/clerk-react";
 import { Template } from "@pdfme/common";
 import { Viewer } from "@pdfme/ui";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { font, plugins } from "../../_components/SchemaPDF";
 import { Button } from "@/components/ui/button";
 import { generate } from "@pdfme/generator";
-import { FileDown, FilePenLineIcon, FileX2Icon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { voidInvoice } from "@/lib/actions/invoices";
+import { FileDown } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 
 const InvoiceViewerClient = ({
   template,
@@ -30,53 +18,7 @@ const InvoiceViewerClient = ({
 }) => {
   const uiRef = useRef<HTMLDivElement | null>(null);
   const ui = useRef<Viewer | null>(null);
-  const router = useRouter();
-  const { user } = useUser();
   const isVoid = inputs[0].validity_status === "void";
-  const invoiceId = inputs[0].invoiceId?.toString() as string;
-
-  // Void Invoice
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [voidReason, setVoidReason] = useState<string>("");
-  const handleVoidAction = () => {
-    setIsDialogOpen(true);
-  };
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-  };
-  const handleVoidInvoice = async () => {
-    if (!voidReason.trim()) {
-      toast.error("Please input a void reason.");
-      return;
-    }
-
-    try {
-      console.log("start to void");
-      const res = await voidInvoice({
-        invoiceId: invoiceId,
-        validityStatus: "void",
-        voidReason: voidReason,
-        lastUpdatedBy: user?.id || "",
-      });
-
-      console.log("res", res);
-
-      handleCloseDialog();
-
-      toast("Invoice Void Successfully", {
-        action: {
-          label: "View Invoice",
-          onClick: () =>
-            router.push(`/staff/invoices/view-invoice/${invoiceId}`),
-        },
-      });
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error voiding invoice:", error);
-      toast.error("An error occurred while voiding the invoice.");
-    }
-  };
 
   useEffect(() => {
     const buildUi = () => {
@@ -115,52 +57,10 @@ const InvoiceViewerClient = ({
 
   return (
     <div className="flex flex-col gap-2 lg:w-1/2 w-full h-screen">
-      <div className="flex gap-2 mb-4 justify-between">
-        <Button type="button" onClick={() => generatePDF()} disabled={isVoid}>
-          <FileDown className="mr-2 h-4 w-4" />
-          Download PDF
-        </Button>
-
-        <Button
-          type="button"
-          onClick={() =>
-            router.push(`/staff/invoices/edit-invoice/${invoiceId}`)
-          }
-          disabled={isVoid}
-        >
-          <FilePenLineIcon className="mr-2 h-4 w-4" />
-          Edit Invoice
-        </Button>
-
-        <Button type="button" onClick={handleVoidAction} disabled={isVoid}>
-          <FileX2Icon className="mr-2 h-4 w-4" />
-          Void Invoice
-        </Button>
-      </div>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently void the
-              customer&apos;s invoice.
-            </DialogDescription>
-          </DialogHeader>
-          <Label>Void Reason</Label>
-          <Input
-            required={true}
-            value={voidReason}
-            placeholder="Enter void reason..."
-            onChange={(e) => setVoidReason(e.target.value)}
-          />
-          <div className="flex justify-end">
-            <Button variant="destructive" onClick={handleVoidInvoice}>
-              Void Invoice
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Button type="button" onClick={() => generatePDF()} disabled={isVoid}>
+        <FileDown className="mr-2 h-4 w-4" />
+        Download PDF
+      </Button>
       <div ref={uiRef} />
     </div>
   );
