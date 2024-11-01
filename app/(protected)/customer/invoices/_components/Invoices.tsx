@@ -533,18 +533,6 @@ export default function Invoices({
           </div>
 
           <Tabs defaultValue="all">
-            <div className="flex items-center">
-              <div className="ml-auto flex items-center gap-2">
-                <Link href="/staff/invoices/create-invoice">
-                  <Button size="sm" className="h-8 gap-1">
-                    <PlusCircle className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Create Invoices
-                    </span>
-                  </Button>
-                </Link>
-              </div>
-            </div>
             <TabsContent value="all">{cardDisplay("all")}</TabsContent>
             <TabsContent value="active">{cardDisplay("active")}</TabsContent>
             <TabsContent value="draft">{cardDisplay("draft")}</TabsContent>
