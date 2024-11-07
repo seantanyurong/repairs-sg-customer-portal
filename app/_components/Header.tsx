@@ -14,6 +14,7 @@ import Image from "next/image";
 import CustomerUserButton from "../(protected)/_components/account/CustomerUserButton";
 
 const NAVIGATION_LABELS = {
+  PREDICTOR: "Predictor",
   SERVICES: "Services",
   JOBS: "Jobs",
   INVOICES: "Invoices",

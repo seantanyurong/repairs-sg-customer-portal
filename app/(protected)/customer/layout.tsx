@@ -61,6 +61,18 @@ export default function PublicLayout({
                     <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
                   </Link>
                   <Link
+                    href="/customer/predictor"
+                    className={`flex items-center gap-4 px-2.5 ${
+                      pathname === "/customer/predictor"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <Hammer className="h-5 w-5" />
+                    {NAVIGATION_LABELS.PREDICTOR}
+                  </Link>
+                  <Link
                     href="/customer/services"
                     className={`flex items-center gap-4 px-2.5 ${
                       pathname === "/customer/services"
