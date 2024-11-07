@@ -37,12 +37,19 @@ export default function PublicLayout({
   function Header() {
     return (
       <div className="flex min-h-screen w-full flex-col bg-muted/40">
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <div className="flex flex-col sm:gap-4 sm:py-4">
           <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
             {/* Side Toggle Menu */}
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <Sheet
+              open={isOpen}
+              onOpenChange={setIsOpen}
+            >
               <SheetTrigger asChild>
-                <Button size="icon" variant="outline" className="sm:hidden">
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="sm:hidden"
+                >
                   <PanelLeft className="h-5 w-5" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
@@ -59,6 +66,18 @@ export default function PublicLayout({
                   >
                     <Home className="h-5 w-5 transition-all group-hover:scale-110" />
                     <span className="sr-only">{NAVIGATION_LABELS.HOME}</span>
+                  </Link>
+                  <Link
+                    href="/customer/predictor"
+                    className={`flex items-center gap-4 px-2.5 ${
+                      pathname === "/customer/predictor"
+                        ? "text-foreground"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    onClick={handleLinkClick}
+                  >
+                    <Hammer className="h-5 w-5" />
+                    {NAVIGATION_LABELS.PREDICTOR}
                   </Link>
                   <Link
                     href="/customer/services"
