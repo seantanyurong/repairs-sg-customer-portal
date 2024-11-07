@@ -10,26 +10,17 @@ import JobTable from "./(home)/_components/JobTable";
 
 export default function CustomerHome() {
   return (
-    <div>
+    <div className="container mx-auto py-2 px-4 lg:px-10">
       <RewardBanner />
       <HeroSection />
       <PredictorBanner />
-
-      <div className="container mx-auto py-2 px-4 lg:px-10">
-        <div className="p-4">
-          <JobsPage />
-        </div>
+      <div className="p-4">
+        <JobsPage />
       </div>
-
       <ShareReferralTile />
-
-      <div className="container mx-auto py-2 px-4 lg:px-10">
-        <div className="p-4">
-          <JobTable />
-        </div>
-        
+      <div className="p-4">
+        <JobTable />
       </div>
-
       <ReviewSection />
       <Footer />
     </div>
