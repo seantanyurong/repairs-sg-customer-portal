@@ -6,9 +6,11 @@ const isCustomerRoute = createRouteMatcher(['/customer(.*)']);
 const isHomeRoute = createRouteMatcher(['/']);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (req.nextUrl.pathname.startsWith('/customer/services')) return NextResponse.next();
-
-  if (req.nextUrl.pathname.startsWith('/customer/predictor')) return NextResponse.next();
+  if (
+    req.nextUrl.pathname.startsWith('/customer/services') || 
+    req.nextUrl.pathname.startsWith('/customer/predictor') || 
+    req.nextUrl.pathname.startsWith('/customer/contact-us')
+  ) return NextResponse.next();
 
   if (!auth().userId && isCustomerRoute(req)) {
     return NextResponse.redirect(new URL('/sign-in', req.url));
