@@ -13,7 +13,7 @@ export default function ReviewSection() {
     >
       <div className="flex flex-col items-center">
         <div className="flex items-center mb-4">
-          {Array.from({ length: 4 }, (_, index) => (
+          {Array.from({ length: 5 }, (_, index) => (
             <Star
               key={index}
               fill="orange"
