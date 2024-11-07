@@ -39,7 +39,7 @@ const PredictorPage: React.FC = () => {
   }, [predictedPrice, predictedDuration]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-screen-lg mx-auto">
       {/* Hero Section */}
       <section className="hero bg-gradient-to-r from-yellow-400 to-yellow-200 text-black py-8 text-center">
         <h1 className="text-4xl font-bold">{PREDICTOR_BANNER.TITLE}</h1>
@@ -54,22 +54,22 @@ const PredictorPage: React.FC = () => {
       {/* How It Works Section */}
       <section className="how-it-works py-4">
         <h2 className="text-3xl font-semibold text-center">How It Works</h2>
-        <div className="flex flex-col lg:flex-row justify-around mt-10 space-y-6 lg:space-y-0">
-          <div className="step text-center">
+        <div className="flex flex-col lg:flex-row justify-around mt-10 space-y-4 lg:space-y-0 lg:space-x-10">
+          <div className="step flex-1 flex flex-col items-center justify-center text-center">
             <div className="icon bg-white p-4 rounded-full mx-auto flex items-center justify-center">
               <BarChart className="text-primary h-12 w-12" />
             </div>
             <h3 className="mt-2 font-semibold">Step 1: Choose Repair Category</h3>
             <p>Pick the type of Repair Job to get started.</p>
           </div>
-          <div className="step text-center">
+          <div className="step flex-1 flex flex-col items-center justify-center text-center">
             <div className="icon bg-white p-4 rounded-full mx-auto flex items-center justify-center">
               <Cpu className="text-primary h-12 w-12" />
             </div>
             <h3 className="mt-2 font-semibold">Step 2: Provide Details</h3>
             <p>Input the relevant details for an accurate estimate.</p>
           </div>
-          <div className="step text-center">
+          <div className="step flex-1 flex flex-col items-center justify-center text-center">
             <div className="icon bg-white p-4 rounded-full mx-auto flex items-center justify-center">
               <Clock className="text-primary h-12 w-12" />
             </div>
