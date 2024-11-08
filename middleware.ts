@@ -22,10 +22,28 @@ export default clerkMiddleware(async (auth, req) => {
   const userId = auth().userId;
   if (typeof userId === "string") {
     const user = await clerkClient().users.getUser(userId as string);
+
+    const status = (user.publicMetadata as { status: string }).status;
+
+    if (
+      status.toLowerCase() === "blacklisted" &&
+      isCustomerRoute(req) &&
+      req.nextUrl.pathname !== "/customer/blacklisted"
+    ) {
+      return NextResponse.redirect(new URL("/customer/blacklisted", req.url));
+    }
+
     if (user && isHomeRoute(req)) {
       return NextResponse.redirect(new URL("/customer", req.url));
     }
   }
+
+  if (
+    req.nextUrl.pathname.startsWith("/customer/services") ||
+    req.nextUrl.pathname.startsWith("/customer/predictor") ||
+    req.nextUrl.pathname.startsWith("/customer/contact-us")
+  )
+    return NextResponse.next();
 });
 
 export const config = {
