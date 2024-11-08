@@ -751,14 +751,14 @@ export const template: Template = {
 
 export const font: Font = {
   "Roboto Bold": {
-    data: "http://localhost:3000/fonts/Roboto-Bold.ttf",
+    data: "http://localhost:8000/fonts/Roboto-Bold.ttf",
   },
   "Roboto Italic": {
-    data: "http://localhost:3000/fonts/Roboto-Italic.ttf",
+    data: "http://localhost:8000/fonts/Roboto-Italic.ttf",
   },
   Roboto: {
     fallback: true,
-    data: "http://localhost:3000/fonts/Roboto-Regular.ttf",
+    data: "http://localhost:8000/fonts/Roboto-Regular.ttf",
   },
 };
 

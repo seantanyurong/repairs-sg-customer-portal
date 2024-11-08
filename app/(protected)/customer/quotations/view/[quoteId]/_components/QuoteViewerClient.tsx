@@ -1,46 +1,16 @@
 "use client";
 
-import { Font, Template } from "@pdfme/common";
-import { Viewer } from "@pdfme/ui";
-import { useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { generate } from "@pdfme/generator";
-import { toast } from "sonner";
-import { FileDown } from "lucide-react";
 import {
-  barcodes,
-  ellipse,
-  image,
-  line,
-  multiVariableText,
-  rectangle,
-  table,
-  text,
-} from "@pdfme/schemas";
-
-const plugins = {
-  Text: text,
-  "Multi-Variable Text": multiVariableText,
-  Table: table,
-  Line: line,
-  Rectangle: rectangle,
-  Ellipse: ellipse,
-  Image: image,
-  QR: barcodes.qrcode,
-};
-
-const font: Font = {
-  "Roboto Bold": {
-    data: "http://localhost:8000/fonts/Roboto-Bold.ttf",
-  },
-  "Roboto Italic": {
-    data: "http://localhost:8000/fonts/Roboto-Italic.ttf",
-  },
-  Roboto: {
-    fallback: true,
-    data: "http://localhost:8000/fonts/Roboto-Regular.ttf",
-  },
-};
+  font,
+  plugins,
+} from "@/app/(protected)/customer/invoices/_components/SchemaPDF";
+import { Button } from "@/components/ui/button";
+import { Template } from "@pdfme/common";
+import { generate } from "@pdfme/generator";
+import { Viewer } from "@pdfme/ui";
+import { FileDown } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 const QuoteViewerClient = ({
   template,
@@ -52,7 +22,6 @@ const QuoteViewerClient = ({
   const uiRef = useRef<HTMLDivElement | null>(null);
   const ui = useRef<Viewer | null>(null);
 
-  console.log(inputs);
   useEffect(() => {
     const buildUi = () => {
       if (typeof window !== "undefined" && uiRef.current) {
