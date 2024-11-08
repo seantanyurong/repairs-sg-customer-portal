@@ -3,10 +3,9 @@ import ReviewSection from "../../_components/Review";
 import Footer from "../../_components/Footer";
 import RewardBanner from "../_components/home/RewardBanner";
 import PredictorBanner from "../_components/home/PredictorBanner";
-import JobsPage from "./services/page";
 import ShareReferralTile from "./(home)/_components/ShareReferralTile";
 import JobTable from "./(home)/_components/JobTable";
-
+import ServicesPage from "./services/page";
 
 export default function CustomerHome() {
   return (
@@ -15,7 +14,7 @@ export default function CustomerHome() {
       <HeroSection />
       <PredictorBanner />
       <div className="p-4">
-        <JobsPage />
+        <ServicesPage />
       </div>
       <ShareReferralTile />
       <div className="p-4">
