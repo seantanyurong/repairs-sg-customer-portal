@@ -1,5 +1,5 @@
 import { getOneQuotation, updateQuotation } from "@/lib/actions/quotations";
-import { auth } from "@clerk/nextjs/server";
+import { auth, User } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import React from "react";
 import QuoteActionsClient from "./_components/QuoteActionsClient";
@@ -7,6 +7,7 @@ import QuoteViewerClient from "./_components/QuoteViewerClient";
 import { getOneQuoteTemplate } from "@/lib/actions/quoteTemplates";
 import { Template } from "@pdfme/common";
 import dayjs from "dayjs";
+import { getCustomerById } from "@/lib/actions/customers";
 
 const updateRequiredField = (
   schemas: Template["schemas"],
@@ -36,7 +37,17 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
   if (!userId) redirect("/customer");
 
   const quotation = JSON.parse(await getOneQuotation(params.quoteId));
-  if (quotation.customer !== userId) redirect("/customer");
+
+  if (!quotation.customer) {
+    const user: User = JSON.parse(await getCustomerById(userId));
+    const clerkEmail = user.emailAddresses[0].emailAddress;
+    if (clerkEmail !== quotation.customerEmail) redirect("/customer");
+
+    await updateQuotation(params.quoteId, JSON.stringify({ customer: userId }));
+  }
+
+  if (quotation.customer && quotation.customer !== userId)
+    redirect("/customer");
 
   const quoteTemplate = JSON.parse(
     await getOneQuoteTemplate(quotation.quoteTemplate)
