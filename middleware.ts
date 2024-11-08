@@ -5,12 +5,19 @@ import {
 } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-// Protected Routes
+// Protected Customer Routes
 const isCustomerRoute = createRouteMatcher(["/customer(.*)"]);
 const isHomeRoute = createRouteMatcher(["/"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (req.nextUrl.pathname.startsWith("/customer/services"))
+  // Public Customer Routes
+  if (
+    req.nextUrl.pathname.startsWith("/customer/services") ||
+    req.nextUrl.pathname.startsWith("/customer/predictor") ||
+    req.nextUrl.pathname.startsWith("/customer/contact-us") ||
+    req.nextUrl.pathname.startsWith("/customer/about-us") || 
+    req.nextUrl.pathname.startsWith("/customer/faq")
+  )
     return NextResponse.next();
 
   if (!auth().userId && isCustomerRoute(req)) {
@@ -37,13 +44,6 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(new URL("/customer", req.url));
     }
   }
-
-  if (
-    req.nextUrl.pathname.startsWith("/customer/services") ||
-    req.nextUrl.pathname.startsWith("/customer/predictor") ||
-    req.nextUrl.pathname.startsWith("/customer/contact-us")
-  )
-    return NextResponse.next();
 });
 
 export const config = {
