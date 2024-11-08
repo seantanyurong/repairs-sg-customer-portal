@@ -10,13 +10,13 @@ import ServicesPage from "./services/page";
 export default function CustomerHome() {
   return (
     <div className="container mx-auto py-2 px-4 lg:px-10">
-      <RewardBanner />
+      <ShareReferralTile />
       <HeroSection />
       <PredictorBanner />
       <div className="p-4">
         <ServicesPage />
       </div>
-      <ShareReferralTile />
+      <RewardBanner />
       <div className="p-4">
         <JobTable />
       </div>
