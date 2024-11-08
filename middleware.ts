@@ -26,7 +26,7 @@ export default clerkMiddleware(async (auth, req) => {
     const status = (user.publicMetadata as { status: string }).status;
 
     if (
-      status.toLowerCase() === "blacklisted" &&
+      status?.toLowerCase() === "blacklisted" &&
       isCustomerRoute(req) &&
       req.nextUrl.pathname !== "/customer/blacklisted"
     ) {
