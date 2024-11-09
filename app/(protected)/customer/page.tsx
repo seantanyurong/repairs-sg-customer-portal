@@ -1,30 +1,27 @@
-import ShareReferralTile from "./(home)/_components/ShareReferralTile";
+import HeroSection from "../../_components/Hero";
+import ReviewSection from "../../_components/Review";
 import RewardBanner from "../_components/home/RewardBanner";
-import JobsPage from "./services/page";
+import PredictorBanner from "../_components/home/PredictorBanner";
+import ShareReferralTile from "./(home)/_components/ShareReferralTile";
 import JobTable from "./(home)/_components/JobTable";
-import PromotionalVideo from "./(home)/_components/PromotionalVideo";
+import ServicesPage from "./services/page";
+import Logo from "../../_components/Logo";
 
 export default function CustomerHome() {
   return (
-    <div>
-      <PromotionalVideo />
-      <div className="container mx-auto py-2 px-4 lg:px-10">
-        <div className="p-4">
-          <ShareReferralTile />
-        </div>
-
-        <div className="p-4">
-          <JobsPage />
-        </div>
-
-        <div className="p-4">
-          <RewardBanner />
-        </div>
-
-        <div className="p-4">
-          <JobTable />
-        </div>
+    <div className="container mx-auto py-2 px-4 lg:px-10 max-w-7xl">
+      <ShareReferralTile />
+      <HeroSection />
+      <PredictorBanner />
+      <div className="p-4">
+        <ServicesPage />
       </div>
+      <RewardBanner />
+      <div className="p-4">
+        <JobTable />
+      </div>
+      <ReviewSection />
+      <Logo />
     </div>
   );
 }
