@@ -364,13 +364,8 @@ const approveInvoice = async (invoice: {
 
   const context = { runValidators: true, context: "query" };
 
-  console.log(filter, update, context);
   try {
-    console.log("hi");
-    const result = await Invoice.findOneAndUpdate(filter, update, context);
-    console.log("bye");
-    console.log("result", result);
-    revalidatePath("/customer/invoices");
+    await Invoice.findOneAndUpdate(filter, update, context);
     return { message: "Invoice Approved Successfully" };
   } catch (error: unknown) {
     console.error("Error during findOneAndUpdate:", error);

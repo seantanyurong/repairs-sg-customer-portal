@@ -19,6 +19,7 @@ interface Invoice {
   payments: { paymentMethod: string }[] | never[];
   createdAt: string | Date;
   updatedAt: string | Date;
+  qrCode: string;
 }
 
 export default async function InvoicesPage() {
@@ -70,6 +71,7 @@ export default async function InvoicesPage() {
         invoice.payments && invoice.payments.length > 0
           ? serializePayment(invoice.payments)
           : [],
+      qrCode: invoice.qrCode,
     };
   };
   const serializedInvoices = invoices.map(serializeInvoice);

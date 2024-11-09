@@ -45,6 +45,7 @@ interface Invoice {
   payments: { paymentMethod: string }[] | never[];
   createdAt: string | Date;
   updatedAt: string | Date;
+  qrCode: string;
 }
 
 interface InvoicesProps {
@@ -221,6 +222,7 @@ export default function Invoices({
             paymentStatus={invoice.paymentStatus}
             validityStatus={invoice.validityStatus}
             paymentMethod={invoice.payments[0]?.paymentMethod}
+            qrCode={invoice.qrCode}
           />
         );
       });
@@ -240,6 +242,7 @@ export default function Invoices({
             paymentStatus={invoice.paymentStatus}
             validityStatus={invoice.validityStatus}
             paymentMethod={invoice.payments[0]?.paymentMethod}
+            qrCode={invoice.qrCode}
           />
         );
       });
