@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +12,9 @@ import { MoreHorizontal } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { useState } from "react";
+import { approveInvoice } from "@/lib/actions/invoices";
+import { toast } from "sonner";
 
 export default function InvoiceRow({
   invoiceId,
@@ -36,6 +41,35 @@ export default function InvoiceRow({
   const formattedDateIssued = dayjs(dateIssued).format("DD/MM/YYYY");
 
   const isVoid = validityStatus === "void";
+  const isPaid = paymentStatus === "Paid";
+  const isApproved = validityStatus === "approved";
+
+  const [actionType, setActionType] = useState<"approve" | "comment">(
+    "approve"
+  );
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+  // Approve Invoice
+  const handleApproveInvoice = async () => {
+    try {
+      await approveInvoice({
+        invoiceId: invoiceId,
+        validityStatus: "approved",
+      });
+
+      toast("Invoice Approved Successfully", {
+        className: "cursor-pointer",
+        action: {
+          label: "View Invoice",
+          onClick: () =>
+            router.push(`/customer/invoices/view-invoice/${invoiceId}`),
+        },
+      });
+    } catch (error) {
+      console.error("Error voiding invoice:", error);
+      toast.error("An error occurred while voiding the invoice.");
+    }
+  };
 
   return (
     <>
@@ -81,6 +115,13 @@ export default function InvoiceRow({
                 className="cursor-pointer"
               >
                 View
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                disabled={isVoid || isPaid || isApproved}
+                onClick={handleApproveInvoice}
+                className="cursor-pointer"
+              >
+                Approve
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
