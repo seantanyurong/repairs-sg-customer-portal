@@ -29,7 +29,7 @@ export default function Header() {
     <header>
       {/* Top Nav Bar */}
       <NavigationMenu className="bg-primary w-full h-16 flex items-center justify-between px-8">
-        <Link href="/customer">
+        <Link href="/">
           <Image
             src="/images/logo.jpg"
             alt="Repair.sg Logo"
