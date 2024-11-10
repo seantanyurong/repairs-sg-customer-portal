@@ -17,7 +17,15 @@ export default function ContactUs() {
             </div>
             <h3 className="text-xl font-semibold mb-2">WhatsApp</h3>
             <p className="text-lg text-black mb-4">
-              You may reach our team through <strong>+65 9070 6060</strong> (Preferred)
+              You may reach our team through{' '}
+              <a 
+                href="https://wa.me/6590706060?text=Hello%20Repair.sg,%20I%20need%20help%20with%20..." 
+                className="text-primary underline" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <strong>+65 9070 6060</strong>
+              </a> (Preferred)
             </p>
           </div>
 
@@ -37,7 +45,11 @@ export default function ContactUs() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Email</h3>
             <p className="text-lg text-black mb-4">
-              To reach us through email, please send your message to: <strong>help@repair.sg</strong>.
+              To reach us through email, please send your message to: 
+              <a href="mailto:help@repair.sg?subject=Repair Enquiry&body=Hello Repair.sg, %0A%0AI need help with..." className="text-primary underline">
+                <strong>help@repair.sg</strong>
+              </a>
+              .
             </p>
           </div>
         </div>
