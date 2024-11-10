@@ -5,6 +5,18 @@ import { z } from 'zod';
 import { ObjectId } from 'mongodb';
 import { currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
+import { createClerkClient } from '@clerk/nextjs/server';
+
+const customerClerk = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY as string,
+});
+
+const checkValidReferralCode = async (referralCode: string) => {
+  const customers = (await customerClerk.users.getUserList()).data;
+  const referrer = customers.find((customer) => customer.unsafeMetadata.referralCode === referralCode);
+  console.log(referrer);
+  return referrer?.id;
+};
 
 const addJob = async (job: {
   quantity: number;
@@ -13,6 +25,7 @@ const addJob = async (job: {
   description: string;
   serviceId: string;
   price: number;
+  referralCode: string;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
   const user = await currentUser();
 
@@ -22,6 +35,12 @@ const addJob = async (job: {
   job.description += `\n\nPrice: $${job.price}`;
 
   const formattedSchedule = JSON.parse(job.schedule);
+  let referrer;
+
+  if (job.referralCode) {
+    referrer = await checkValidReferralCode(job.referralCode);
+    if (!referrer) return { message: 'Error', errors: { referralCode: 'Invalid Referral Code' } };
+  }
 
   // Create Job
   const jobSchema = z.object({
@@ -34,19 +53,47 @@ const addJob = async (job: {
     description: z.string(),
     service: z.instanceof(ObjectId),
     customer: z.string(),
+    price: z.number(),
+    referralCode: z
+      .object({
+        referrer: z.string(),
+        code: z.string(),
+        customer: z.string(),
+      })
+      .optional(),
   });
 
-  const response = jobSchema.safeParse({
-    quantity: job.quantity,
-    jobAddress: job.jobAddress,
-    schedule: {
-      timeStart: new Date(formattedSchedule.timeStart),
-      timeEnd: new Date(formattedSchedule.timeEnd),
-    },
-    description: job.description,
-    service: new ObjectId(job.serviceId),
-    customer: user.id,
-  });
+  const response =
+    job.referralCode !== ''
+      ? jobSchema.safeParse({
+          quantity: job.quantity,
+          jobAddress: job.jobAddress,
+          schedule: {
+            timeStart: new Date(formattedSchedule.timeStart),
+            timeEnd: new Date(formattedSchedule.timeEnd),
+          },
+          description: job.description,
+          service: new ObjectId(job.serviceId),
+          customer: user.id,
+          price: job.price,
+          referralCode: {
+            referrer: referrer,
+            code: job.referralCode,
+            customer: user.id,
+          },
+        })
+      : jobSchema.safeParse({
+          quantity: job.quantity,
+          jobAddress: job.jobAddress,
+          schedule: {
+            timeStart: new Date(formattedSchedule.timeStart),
+            timeEnd: new Date(formattedSchedule.timeEnd),
+          },
+          description: job.description,
+          service: new ObjectId(job.serviceId),
+          customer: user.id,
+          price: job.price,
+        });
 
   if (!response.success) {
     return { message: 'Error', errors: response.error.flatten().fieldErrors };
