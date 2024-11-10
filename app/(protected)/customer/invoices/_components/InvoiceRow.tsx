@@ -31,9 +31,8 @@ export default async function InvoiceRow({
   lineItems,
   validityStatus,
   paymentStatus,
-  paymentMethod,
-  customer,
   qrCode,
+  job,
 }: {
   invoiceId: string;
   dateIssued: string;
@@ -41,9 +40,8 @@ export default async function InvoiceRow({
   lineItems: Array<string>;
   paymentStatus: string;
   validityStatus: string;
-  paymentMethod: string;
-  customer: string;
   qrCode: string;
+  job: string;
 }) {
   const router = useRouter();
 
@@ -104,7 +102,7 @@ export default async function InvoiceRow({
           {formattedDateIssued.toString()}
         </TableCell>
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
-          {customer}
+          {job.toString()}
         </TableCell>
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
           ${totalAmount.toString()}
@@ -117,9 +115,6 @@ export default async function InvoiceRow({
         </TableCell>
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
           {paymentStatus}
-        </TableCell>
-        <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
-          {paymentMethod}
         </TableCell>
         <TableCell>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

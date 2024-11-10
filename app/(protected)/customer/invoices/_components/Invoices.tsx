@@ -41,11 +41,11 @@ interface Invoice {
   paymentStatus: string;
   validityStatus: string;
   publicNote: string;
-  customer: string;
   payments: { paymentMethod: string }[] | never[];
   createdAt: string | Date;
   updatedAt: string | Date;
   qrCode: string;
+  job: string;
 }
 
 interface InvoicesProps {
@@ -208,44 +208,35 @@ export default function Invoices({
     handleSearchFilterSort(query);
   }, [query, handleSearchFilterSort]);
 
-  const invoiceDisplay = (validityStatus?: string) => {
-    if (validityStatus === "all") {
-      return invoices.map((invoice) => {
-        return (
-          <InvoiceRow
-            key={invoice._id.toString()}
-            invoiceId={invoice.invoiceId.toString()}
-            dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
-            totalAmount={invoice.totalAmount.toString()}
-            lineItems={invoice.lineItems}
-            paymentStatus={invoice.paymentStatus}
-            validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
-            qrCode={invoice.qrCode}
-          />
-        );
-      });
-    }
+  const invoiceDisplay = async (validityStatus?: string) => {
+    // Filter invoices based on validityStatus, or include all if "all" is selected
+    const filteredInvoices =
+      validityStatus === "all"
+        ? invoices
+        : invoices.filter(
+            (invoice) => invoice.validityStatus === validityStatus
+          );
 
-    return invoices
-      .filter((invoice) => invoice.validityStatus === validityStatus)
-      .map((invoice) => {
+    // Map invoices to promises that fetch job and return InvoiceRow components
+    const invoiceRows = await Promise.all(
+      filteredInvoices.map(async (invoice) => {
         return (
           <InvoiceRow
             key={invoice._id.toString()}
             invoiceId={invoice.invoiceId.toString()}
             dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
             totalAmount={invoice.totalAmount.toString()}
             lineItems={invoice.lineItems}
             paymentStatus={invoice.paymentStatus}
             validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
             qrCode={invoice.qrCode}
+            job={invoice.job}
           />
         );
-      });
+      })
+    );
+
+    return invoiceRows;
   };
 
   const invoiceCount = (validityStatus?: string) => {
@@ -277,12 +268,11 @@ export default function Invoices({
               <TableRow>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Customer</TableHead>
+                <TableHead>Service</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Line Items</TableHead>
                 <TableHead>Validity Status</TableHead>
                 <TableHead>Payment Status</TableHead>
-                <TableHead>Payment Method</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>

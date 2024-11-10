@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { getInvoicesByUser } from "@/lib/actions/invoices";
 import { getPayments } from "@/lib/actions/payments";
 import Invoices from "./_components/Invoices";
+import { getJob } from "@/lib/actions/jobs";
+import { getServices } from "@/lib/actions/services";
 
 interface Invoice {
   _id: string;
@@ -20,61 +22,71 @@ interface Invoice {
   createdAt: string | Date;
   updatedAt: string | Date;
   qrCode: string;
+  job: string;
 }
 
 export default async function InvoicesPage() {
   const payment = await getPayments();
   console.log("payment", payment);
+  const services = await getServices();
+  console.log("services", services);
 
   // Fetch User Invoices
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId;
   const invoices: Invoice[] = await getInvoicesByUser(userId as string);
-  //   console.log("user invoices", invoices);
+  // console.log("user invoices", invoices);
 
   // Provide a default date if date fields are missing or invalid
-  const defaultDate = new Date("1970-01-01T00:00:00Z"); // Default date if missing
+  const defaultDate = new Date("1970-01-01T00:00:00Z").toISOString(); // Default date if missing
 
   // Convert Date objects to ISO strings
-  const serializeInvoice = (invoice: Invoice) => {
-    const serializePayment = (payment: { paymentMethod: string }[]) => {
-      return [
-        {
-          paymentMethod: payment[0].paymentMethod,
-        },
-      ];
-    };
+  const serializedInvoices = await Promise.all(
+    invoices.map(async (invoice) => {
+      const serializePayment = (payment: { paymentMethod: string }[]) => {
+        return [
+          {
+            paymentMethod: payment[0].paymentMethod,
+          },
+        ];
+      };
 
-    return {
-      _id: invoice._id.toString(),
-      invoiceId: invoice.invoiceId.toString(),
-      lineItems: invoice.lineItems,
-      dateIssued: invoice.dateIssued
-        ? invoice.dateIssued.toString()
-        : defaultDate.toISOString(),
-      dateDue: invoice.dateDue
-        ? invoice.dateDue.toString()
-        : defaultDate.toISOString(),
-      totalAmount: invoice.totalAmount,
-      remainingDue: invoice.remainingDue,
-      paymentStatus: invoice.paymentStatus,
-      validityStatus: invoice.validityStatus,
-      publicNote: invoice.publicNote,
-      customer: invoice.customer,
-      createdAt: invoice.createdAt
-        ? invoice.createdAt.toString()
-        : defaultDate.toISOString(),
-      updatedAt: invoice.updatedAt
-        ? invoice.updatedAt.toString()
-        : defaultDate.toISOString(),
-      payments:
-        invoice.payments && invoice.payments.length > 0
-          ? serializePayment(invoice.payments)
-          : [],
-      qrCode: invoice.qrCode,
-    };
-  };
-  const serializedInvoices = invoices.map(serializeInvoice);
+      let serviceName = "Unknown";
+      if (invoice.job) {
+        const job = await getJob(invoice.job);
+        serviceName = job.service.name;
+      }
+
+      return {
+        _id: invoice._id.toString(),
+        invoiceId: invoice.invoiceId.toString(),
+        lineItems: invoice.lineItems,
+        dateIssued: invoice.dateIssued
+          ? invoice.dateIssued.toString()
+          : defaultDate,
+        dateDue: invoice.dateDue ? invoice.dateDue.toString() : defaultDate,
+        totalAmount: invoice.totalAmount,
+        remainingDue: invoice.remainingDue,
+        paymentStatus: invoice.paymentStatus,
+        validityStatus: invoice.validityStatus,
+        publicNote: invoice.publicNote,
+        customer: invoice.customer,
+        createdAt: invoice.createdAt
+          ? invoice.createdAt.toString()
+          : defaultDate,
+        updatedAt: invoice.updatedAt
+          ? invoice.updatedAt.toString()
+          : defaultDate,
+        payments:
+          invoice.payments && invoice.payments.length > 0
+            ? serializePayment(invoice.payments)
+            : [],
+        qrCode: invoice.qrCode,
+        job: serviceName,
+      };
+    })
+  );
+
   // console.log("serializedInvoices", serializedInvoices);
 
   // Fetch Customer Full Name
