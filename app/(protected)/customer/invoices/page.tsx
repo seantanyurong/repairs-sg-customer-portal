@@ -35,6 +35,9 @@ export default async function InvoicesPage() {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.userId;
   const invoices: Invoice[] = await getInvoicesByUser(userId as string);
+  const nonDraftInvoices = invoices.filter((invoice) => {
+    return invoice.validityStatus !== "draft";
+  });
   // console.log("user invoices", invoices);
 
   // Provide a default date if date fields are missing or invalid
@@ -42,7 +45,7 @@ export default async function InvoicesPage() {
 
   // Convert Date objects to ISO strings
   const serializedInvoices = await Promise.all(
-    invoices.map(async (invoice) => {
+    nonDraftInvoices.map(async (invoice) => {
       const serializePayment = (payment: { paymentMethod: string }[]) => {
         return [
           {
