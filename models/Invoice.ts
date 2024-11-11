@@ -49,7 +49,7 @@ const invoiceSchema = new mongoose.Schema(
     },
     validityStatus: {
       type: String,
-      enum: ["draft", "active", "void"],
+      enum: ["draft", "active", "void", "approved"],
       default: "draft",
       required: [true, "Invoice Validity Status Is Required!"],
     },
@@ -100,7 +100,7 @@ const invoiceSchema = new mongoose.Schema(
       maxlength: [32, "Invalid Staff ID"],
     },
   },
-  { versionKey: false, timestamps: true },
+  { versionKey: false, timestamps: true }
 );
 
 invoiceSchema.plugin(uniqueValidator, { message: "{VALUE} already exists" });

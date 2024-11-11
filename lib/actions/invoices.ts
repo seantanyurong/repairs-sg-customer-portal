@@ -338,6 +338,59 @@ const voidInvoice = async (invoice: {
   }
 };
 
+const approveInvoice = async (invoice: {
+  invoiceId: string;
+  validityStatus: "approved";
+}): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
+  const invoiceSchema = z.object({
+    invoiceId: z.string().min(1),
+    validityStatus: z.enum(["approved"]),
+  });
+  console.log("invoice", invoice);
+
+  const response = invoiceSchema.safeParse({
+    invoiceId: invoice.invoiceId,
+    validityStatus: invoice.validityStatus,
+  });
+
+  console.log(response.data);
+  console.log("error:", response.error);
+  if (!response.success) {
+    return { message: "", errors: response.error.flatten().fieldErrors };
+  }
+
+  const filter = { invoiceId: response.data.invoiceId };
+  const update = {
+    validityStatus: response.data.validityStatus,
+  };
+
+  const context = { runValidators: true, context: "query" };
+
+  try {
+    await Invoice.findOneAndUpdate(filter, update, context);
+    return { message: "Invoice Approved Successfully" };
+  } catch (error: unknown) {
+    console.error("Error during findOneAndUpdate:", error);
+
+    if (error instanceof mongoose.Error.ValidationError && error.errors) {
+      // Mongoose validation errors (including unique-validator errors)
+      const mongooseErrors = Object.keys(error.errors).reduce((acc, key) => {
+        const friendlyKey = fieldFriendlyNames[key] || key;
+        const errorMessage = error.errors[key].message.replace(
+          key,
+          friendlyKey
+        );
+        acc[friendlyKey] = [errorMessage];
+        return acc;
+      }, {} as Record<string, string[]>);
+
+      return { message: "Validation Error", errors: mongooseErrors };
+    }
+
+    return { message: "An Unexpected Error Occurred" };
+  }
+};
+
 export {
   addInvoice,
   updateInvoice,
@@ -345,4 +398,5 @@ export {
   getInvoices,
   getInvoicesByUser,
   voidInvoice,
+  approveInvoice,
 };

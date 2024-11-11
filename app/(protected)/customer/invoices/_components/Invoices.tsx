@@ -41,10 +41,11 @@ interface Invoice {
   paymentStatus: string;
   validityStatus: string;
   publicNote: string;
-  customer: string;
   payments: { paymentMethod: string }[] | never[];
   createdAt: string | Date;
   updatedAt: string | Date;
+  qrCode: string;
+  job: string;
 }
 
 interface InvoicesProps {
@@ -52,7 +53,7 @@ interface InvoicesProps {
   customerFullName: string;
 }
 
-type ValidityStatus = "active" | "draft" | "void";
+type ValidityStatus = "active" | "draft" | "void" | "approved";
 type PaymentStatus = "paid" | "unpaid";
 type PaymentMethod = "cash" | "banktransfer" | "paynow" | "unknown";
 
@@ -73,10 +74,12 @@ export default function Invoices({
     active: boolean;
     draft: boolean;
     void: boolean;
+    approved: boolean;
   }>({
     active: true,
     draft: true,
     void: true,
+    approved: true,
   });
   const [paymentStatus, setPaymentStatus] = useState<{
     paid: boolean;
@@ -205,42 +208,35 @@ export default function Invoices({
     handleSearchFilterSort(query);
   }, [query, handleSearchFilterSort]);
 
-  const invoiceDisplay = (validityStatus?: string) => {
-    if (validityStatus === "all") {
-      return invoices.map((invoice) => {
-        return (
-          <InvoiceRow
-            key={invoice._id.toString()}
-            invoiceId={invoice.invoiceId.toString()}
-            dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
-            totalAmount={invoice.totalAmount.toString()}
-            lineItems={invoice.lineItems}
-            paymentStatus={invoice.paymentStatus}
-            validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
-          />
-        );
-      });
-    }
+  const invoiceDisplay = async (validityStatus?: string) => {
+    // Filter invoices based on validityStatus, or include all if "all" is selected
+    const filteredInvoices =
+      validityStatus === "all"
+        ? invoices
+        : invoices.filter(
+            (invoice) => invoice.validityStatus === validityStatus
+          );
 
-    return invoices
-      .filter((invoice) => invoice.validityStatus === validityStatus)
-      .map((invoice) => {
+    // Map invoices to promises that fetch job and return InvoiceRow components
+    const invoiceRows = await Promise.all(
+      filteredInvoices.map(async (invoice) => {
         return (
           <InvoiceRow
             key={invoice._id.toString()}
             invoiceId={invoice.invoiceId.toString()}
             dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
             totalAmount={invoice.totalAmount.toString()}
             lineItems={invoice.lineItems}
             paymentStatus={invoice.paymentStatus}
             validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
+            qrCode={invoice.qrCode}
+            job={invoice.job}
           />
         );
-      });
+      })
+    );
+
+    return invoiceRows;
   };
 
   const invoiceCount = (validityStatus?: string) => {
@@ -272,12 +268,11 @@ export default function Invoices({
               <TableRow>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Customer</TableHead>
+                <TableHead>Service</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Line Items</TableHead>
                 <TableHead>Validity Status</TableHead>
                 <TableHead>Payment Status</TableHead>
-                <TableHead>Payment Method</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -361,6 +356,23 @@ export default function Invoices({
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Void
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="validityVoid"
+                    defaultChecked={true}
+                    onCheckedChange={(checked) => {
+                      if (typeof checked === "boolean")
+                        handleValidityChange("approved", checked);
+                    }}
+                  />
+                  <label
+                    htmlFor="validityVoid"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Approved
                   </label>
                 </div>
               </div>

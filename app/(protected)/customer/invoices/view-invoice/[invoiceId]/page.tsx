@@ -102,10 +102,12 @@ const ViewInvoice = async ({ params }: { params: { invoiceId: string } }) => {
         : "",
       sales_mobile: staffDetails.phone,
       sales_email: staffDetails.email,
+      qrCode: invoice.qrCode as string,
     },
   ];
 
   const isVoid = inputs[0].validity_status === "void";
+  const isApproved = inputs[0].validity_status === "approved";
 
   return (
     <>
@@ -123,6 +125,8 @@ const ViewInvoice = async ({ params }: { params: { invoiceId: string } }) => {
             <span>
               <s>Invoice #{invoice.invoiceId}</s> - Invoice Voided
             </span>
+          ) : isApproved ? (
+            <span>Invoice #{invoice.invoiceId} - Approved</span>
           ) : (
             <span>Invoice #{invoice.invoiceId}</span>
           )}
