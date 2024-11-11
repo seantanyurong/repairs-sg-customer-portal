@@ -53,7 +53,7 @@ interface InvoicesProps {
   customerFullName: string;
 }
 
-type ValidityStatus = "active" | "draft" | "void" | "approved";
+type ValidityStatus = "active" | "void" | "approved";
 type PaymentStatus = "paid" | "unpaid";
 type PaymentMethod = "cash" | "banktransfer" | "paynow" | "unknown";
 
@@ -72,12 +72,10 @@ export default function Invoices({
   // Filter states
   const [validityStatus, setValidityStatus] = useState<{
     active: boolean;
-    draft: boolean;
     void: boolean;
     approved: boolean;
   }>({
     active: true,
-    draft: true,
     void: true,
     approved: true,
   });
@@ -325,23 +323,6 @@ export default function Invoices({
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="validityDraft"
-                    defaultChecked={true}
-                    onCheckedChange={(checked) => {
-                      if (typeof checked === "boolean")
-                        handleValidityChange("draft", checked);
-                    }}
-                  />
-                  <label
-                    htmlFor="validityDraft"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Draft
-                  </label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
                     id="validityVoid"
                     defaultChecked={true}
                     onCheckedChange={(checked) => {
@@ -542,7 +523,6 @@ export default function Invoices({
           <Tabs defaultValue="all">
             <TabsContent value="all">{cardDisplay("all")}</TabsContent>
             <TabsContent value="active">{cardDisplay("active")}</TabsContent>
-            <TabsContent value="draft">{cardDisplay("draft")}</TabsContent>
             <TabsContent value="void">{cardDisplay("void")}</TabsContent>
           </Tabs>
         </div>
