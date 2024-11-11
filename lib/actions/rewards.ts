@@ -54,7 +54,6 @@ const updateReward = async (reward: {
     rewardCode: z.string().min(1).optional(),
     userId: z.string().min(1).optional(),
     status: z.enum(["ACTIVE", "CLAIMED", "EXPIRED"]).optional(),
-    // type: z.enum(["REFERRAL"]),
     amount: z.number().optional(),
     expiryDate: z.string().optional(),
   });
@@ -77,19 +76,16 @@ const updateReward = async (reward: {
     rewardCode: response.data.rewardCode,
     status: response.data.status,
     userId: response.data.userId,
-    // type: response.data.type,
     amount: response.data.amount,
     expiryDate: response.data.expiryDate,
   };
   await Reward.findOneAndUpdate(filter, update);
-  // revalidatePath("/staff/services");
 
   return { message: "Reward updated successfully" };
 };
 
 const deleteReward = async (rewardId: string) => {
   await Reward.findByIdAndDelete(rewardId);
-  // revalidatePath("/staff/services");
 };
 
 const getReward = async (rewardId: string) => {

@@ -1,11 +1,12 @@
-'use server';
+"use server";
 
-import Job from '@/models/Job';
-import { z } from 'zod';
-import { ObjectId } from 'mongodb';
-import { currentUser } from '@clerk/nextjs/server';
-import { revalidatePath } from 'next/cache';
-import { createClerkClient } from '@clerk/nextjs/server';
+import Job from "@/models/Job";
+import { z } from "zod";
+import { ObjectId } from "mongodb";
+import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
+import { createClerkClient } from "@clerk/nextjs/server";
+import { getRewardsByUserId, updateReward } from "./rewards";
 
 const customerClerk = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY as string,
@@ -13,9 +14,23 @@ const customerClerk = createClerkClient({
 
 const checkValidReferralCode = async (referralCode: string) => {
   const customers = (await customerClerk.users.getUserList()).data;
-  const referrer = customers.find((customer) => customer.unsafeMetadata.referralCode === referralCode);
+  const referrer = customers.find(
+    (customer) => customer.unsafeMetadata.referralCode === referralCode
+  );
   console.log(referrer);
   return referrer?.id;
+};
+
+const checkValidRewardCode = async (rewardCode: string, userId: string) => {
+  const rewards = await getRewardsByUserId(userId);
+  const claimReward = rewards.find(
+    (reward) =>
+      reward.rewardCode === rewardCode &&
+      reward.status === "ACTIVE" &&
+      new Date(reward.expiryDate) > new Date()
+  );
+  console.log("claimed", claimReward);
+  return claimReward;
 };
 
 const addJob = async (job: {
@@ -25,21 +40,49 @@ const addJob = async (job: {
   description: string;
   serviceId: string;
   price: number;
-  referralCode: string;
+  referralCode?: string;
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
   const user = await currentUser();
 
-  if (!user) return { message: 'Error', errors: 'User Not Found' };
+  if (!user) return { message: "Error", errors: "User Not Found" };
 
   // Add price to description
   job.description += `\n\nPrice: $${job.price}`;
 
   const formattedSchedule = JSON.parse(job.schedule);
   let referrer;
+  let claimReward;
 
   if (job.referralCode) {
-    referrer = await checkValidReferralCode(job.referralCode);
-    if (!referrer) return { message: 'Error', errors: { referralCode: 'Invalid Referral Code' } };
+    if (job.referralCode.substring(0, 3) === "REF") {
+      referrer = await checkValidReferralCode(job.referralCode);
+      if (!referrer)
+        return {
+          message: "Error",
+          errors: { referralCode: "Invalid Referral Code" },
+        };
+    } else if (job.referralCode.substring(0, 3) === "REW") {
+      claimReward = await checkValidRewardCode(job.referralCode, user.id);
+      if (!claimReward)
+        return {
+          message: "Error",
+          errors: { rewardCode: "Invalid Reward Code" },
+        };
+      if (claimReward) {
+        console.log("updating reward");
+        referrer = user.id;
+        const updateResult = await updateReward({
+          _id: claimReward._id.toString(),
+          status: "CLAIMED",
+        });
+        console.log("update rew", updateResult);
+      }
+    } else {
+      return {
+        message: "Error",
+        errors: { referralCode: "Invalid Code" },
+      };
+    }
   }
 
   // Create Job
@@ -64,7 +107,7 @@ const addJob = async (job: {
   });
 
   const response =
-    job.referralCode !== ''
+    job.referralCode !== ""
       ? jobSchema.safeParse({
           quantity: job.quantity,
           jobAddress: job.jobAddress,
@@ -96,30 +139,30 @@ const addJob = async (job: {
         });
 
   if (!response.success) {
-    return { message: 'Error', errors: response.error.flatten().fieldErrors };
+    return { message: "Error", errors: response.error.flatten().fieldErrors };
   }
 
   const newJob = new Job(response.data);
   newJob.save();
 
-  return { message: 'Job booked successfully' };
+  return { message: "Job booked successfully" };
 };
 
 const getJobsWithService = async () => {
-  const jobs = await Job.find().populate('service').exec();
+  const jobs = await Job.find().populate("service").exec();
 
   return jobs;
 };
 
 const getJob = async (jobId: string) => {
-  const job = await Job.findById(jobId).populate('service').exec();
+  const job = await Job.findById(jobId).populate("service").exec();
 
   return job;
 };
 
 const deleteJob = async (jobId: string) => {
   await Job.findByIdAndDelete(jobId);
-  revalidatePath('/customer/jobs');
+  revalidatePath("/customer/jobs");
 };
 
 const updateJob = async (job: {
@@ -128,7 +171,7 @@ const updateJob = async (job: {
 }): Promise<{ message: string; errors?: string | Record<string, unknown> }> => {
   const user = await currentUser();
 
-  if (!user) return { message: 'Error', errors: 'User Not Found' };
+  if (!user) return { message: "Error", errors: "User Not Found" };
 
   const formattedSchedule = JSON.parse(job.schedule);
 
@@ -147,12 +190,12 @@ const updateJob = async (job: {
   });
 
   if (!response.success) {
-    return { message: 'Error', errors: response.error.flatten().fieldErrors };
+    return { message: "Error", errors: response.error.flatten().fieldErrors };
   }
 
   await Job.findByIdAndUpdate(job.jobId, response.data);
 
-  return { message: 'Job updated successfully' };
+  return { message: "Job updated successfully" };
 };
 
 export { addJob, getJobsWithService, getJob, deleteJob, updateJob };
