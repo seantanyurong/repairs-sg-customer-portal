@@ -132,7 +132,7 @@ export default function Invoices({
         resultInvoices = resultInvoices.filter((invoice) => {
           // console.log("search", resultInvoices);
           return (
-            customerFullName.includes(query.toLowerCase()) ||
+            invoice.job.includes(query.toLowerCase()) ||
             invoice.invoiceId.toString().includes(query.toLowerCase())
           );
         });
