@@ -133,7 +133,8 @@ export default function Invoices({
           // console.log("search", resultInvoices);
           return (
             invoice.job.includes(query.toLowerCase()) ||
-            invoice.invoiceId.toString().includes(query.toLowerCase())
+            invoice.invoiceId.toString().includes(query.toLowerCase()) ||
+            invoice.dateIssued.toString().includes(query.toLowerCase())
           );
         });
       }
