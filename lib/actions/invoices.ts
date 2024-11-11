@@ -346,6 +346,7 @@ const approveInvoice = async (invoice: {
     invoiceId: z.string().min(1),
     validityStatus: z.enum(["approved"]),
   });
+  console.log("invoice", invoice);
 
   const response = invoiceSchema.safeParse({
     invoiceId: invoice.invoiceId,
@@ -353,6 +354,7 @@ const approveInvoice = async (invoice: {
   });
 
   console.log(response.data);
+  console.log("error:", response.error);
   if (!response.success) {
     return { message: "", errors: response.error.flatten().fieldErrors };
   }

@@ -17,6 +17,7 @@ import { FileCheck2, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { approveInvoice } from "@/lib/actions/invoices";
+import { useRouter } from "next/navigation";
 
 const InvoiceViewerClient = ({
   template,
@@ -36,6 +37,7 @@ const InvoiceViewerClient = ({
   const [qrCodeUrl, setQrCodeUrl] = useState<string>(
     inputs[0].qrCode as string
   );
+  const router = useRouter();
 
   useEffect(() => {
     const buildUi = () => {
@@ -83,16 +85,18 @@ const InvoiceViewerClient = ({
       }
     };
     generateQrCode();
-  }, [qrCodeUrl]);
+  }, [inputs]);
 
   // Approve Invoice
   const handleApproveInvoice = async () => {
-    setIsDialogOpen(true);
+    const invoiceId = (inputs[0].invoiceId as string).toString();
     try {
       await approveInvoice({
-        invoiceId: inputs[0].invoiceId as string,
+        invoiceId: invoiceId,
         validityStatus: "approved",
       });
+
+      setIsDialogOpen(true);
 
       toast("Invoice Approved Successfully", {
         className: "cursor-pointer",
@@ -100,6 +104,14 @@ const InvoiceViewerClient = ({
     } catch (error) {
       console.error("Error voiding invoice:", error);
       toast.error("An error occurred while voiding the invoice.");
+    }
+  };
+
+  const handleDialogClose = (isOpen: boolean) => {
+    setIsDialogOpen(isOpen);
+
+    if (!isOpen) {
+      window.location.reload();
     }
   };
 
@@ -113,14 +125,14 @@ const InvoiceViewerClient = ({
 
         <Button
           type="button"
-          onClick={() => handleApproveInvoice()}
+          onClick={handleApproveInvoice}
           disabled={isVoid || isApproved}
         >
           <FileCheck2 className="mr-2 h-4 w-4" />
           Approve Invoice
         </Button>
       </div>
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
