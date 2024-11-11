@@ -14,6 +14,7 @@ const updateRequiredField = (
   quotation: {
     quotationId: string;
     quotationDate: Date;
+    templateInputs: { [x: string]: string };
   }
 ) => {
   schemas.forEach((schema) => {
@@ -26,6 +27,13 @@ const updateRequiredField = (
         case "quote_date":
           element.content = dayjs(quotation.quotationDate).format("DD/MM/YYYY");
           break;
+        case "line_items":
+          element.content = JSON.stringify(quotation.templateInputs.line_items);
+          break;
+        default:
+          const content = quotation.templateInputs[element.name];
+          if (content) element.content = content;
+          break;
       }
     });
   });
@@ -37,6 +45,7 @@ const Page = async ({ params }: { params: { quoteId: string } }) => {
   if (!userId) redirect("/customer");
 
   const quotation = JSON.parse(await getOneQuotation(params.quoteId));
+  if (quotation.status === "Draft") redirect("/customer");
 
   if (!quotation.customer) {
     const user: User = JSON.parse(await getCustomerById(userId));
