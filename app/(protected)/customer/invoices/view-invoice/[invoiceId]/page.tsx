@@ -102,6 +102,7 @@ const ViewInvoice = async ({ params }: { params: { invoiceId: string } }) => {
         : "",
       sales_mobile: staffDetails.phone,
       sales_email: staffDetails.email,
+      qrCode: invoice.qrCode as string,
     },
   ];
 
