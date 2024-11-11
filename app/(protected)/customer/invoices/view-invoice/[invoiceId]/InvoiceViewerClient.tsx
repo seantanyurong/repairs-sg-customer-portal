@@ -28,6 +28,7 @@ const InvoiceViewerClient = ({
   const uiRef = useRef<HTMLDivElement | null>(null);
   const ui = useRef<Viewer | null>(null);
   const isVoid = inputs[0].validity_status === "void";
+  const isApproved = inputs[0].validity_status === "approved";
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [actionType, setActionType] = useState<"approve" | "comment">(
     "approve"
@@ -113,7 +114,7 @@ const InvoiceViewerClient = ({
         <Button
           type="button"
           onClick={() => handleApproveInvoice()}
-          disabled={isVoid}
+          disabled={isVoid || isApproved}
         >
           <FileCheck2 className="mr-2 h-4 w-4" />
           Approve Invoice
