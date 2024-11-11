@@ -17,7 +17,6 @@ import { FileCheck2, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import QRCode from "qrcode";
 import { approveInvoice } from "@/lib/actions/invoices";
-import { useRouter } from "next/navigation";
 
 const InvoiceViewerClient = ({
   template,
@@ -37,7 +36,8 @@ const InvoiceViewerClient = ({
   const [qrCodeUrl, setQrCodeUrl] = useState<string>(
     inputs[0].qrCode as string
   );
-  const router = useRouter();
+
+  console.log(setActionType);
 
   useEffect(() => {
     const buildUi = () => {

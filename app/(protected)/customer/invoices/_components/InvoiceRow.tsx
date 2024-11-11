@@ -57,6 +57,8 @@ export default async function InvoiceRow({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
+  console.log(setActionType);
+
   // Approve Invoice
   const handleApproveInvoice = async () => {
     setIsDialogOpen(true);
