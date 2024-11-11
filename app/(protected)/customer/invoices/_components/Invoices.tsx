@@ -132,8 +132,9 @@ export default function Invoices({
         resultInvoices = resultInvoices.filter((invoice) => {
           // console.log("search", resultInvoices);
           return (
-            customerFullName.includes(query.toLowerCase()) ||
-            invoice.invoiceId.toString().includes(query.toLowerCase())
+            invoice.job.includes(query.toLowerCase()) ||
+            invoice.invoiceId.toString().includes(query.toLowerCase()) ||
+            invoice.dateIssued.toString().includes(query.toLowerCase())
           );
         });
       }
@@ -208,7 +209,7 @@ export default function Invoices({
     handleSearchFilterSort(query);
   }, [query, handleSearchFilterSort]);
 
-  const invoiceDisplay = async (validityStatus?: string) => {
+  const invoiceDisplay = (validityStatus?: string) => {
     // Filter invoices based on validityStatus, or include all if "all" is selected
     const filteredInvoices =
       validityStatus === "all"
@@ -218,24 +219,21 @@ export default function Invoices({
           );
 
     // Map invoices to promises that fetch job and return InvoiceRow components
-    const invoiceRows = await Promise.all(
-      filteredInvoices.map(async (invoice) => {
-        return (
-          <InvoiceRow
-            key={invoice._id.toString()}
-            invoiceId={invoice.invoiceId.toString()}
-            dateIssued={invoice.dateIssued.toString()}
-            totalAmount={invoice.totalAmount.toString()}
-            lineItems={invoice.lineItems}
-            paymentStatus={invoice.paymentStatus}
-            validityStatus={invoice.validityStatus}
-            qrCode={invoice.qrCode}
-            job={invoice.job}
-          />
-        );
-      })
-    );
-
+    const invoiceRows = filteredInvoices.map((invoice) => {
+      return (
+        <InvoiceRow
+          key={invoice._id.toString()}
+          invoiceId={invoice.invoiceId.toString()}
+          dateIssued={invoice.dateIssued.toString()}
+          totalAmount={invoice.totalAmount.toString()}
+          lineItems={invoice.lineItems}
+          paymentStatus={invoice.paymentStatus}
+          validityStatus={invoice.validityStatus}
+          qrCode={invoice.qrCode}
+          job={invoice.job}
+        />
+      );
+    });
     return invoiceRows;
   };
 
