@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -79,12 +78,7 @@ export default function RewardDetail({
             conditions outlined above
           </p>
         </div>
-        <DialogFooter className="w-full">
-          {/* <Button type="submit" className="cursor-pointer w-full" onClick={() => {
-            router.push(`/customer/booking/${rewardCode}`);
-          }}>
-            Book Now
-          </Button> */}
+        {/* <DialogFooter className="w-full">
           <Button
             type="submit"
             className="cursor-pointer w-full"
@@ -94,7 +88,7 @@ export default function RewardDetail({
           >
             Claim Now
           </Button>
-        </DialogFooter>
+        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );
