@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getJobsWithService } from "@/lib/actions/jobs";
+import { getUpcomingCustomerJob } from "@/lib/actions/jobs";
 import JobRow from "./JobRow";
 // import { getServices } from "@/lib/actions/services";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,7 @@ import Link from "next/link";
 
 export default async function JobTable() {
   const { userId } = auth();
-  const jobs = (await getJobsWithService()).filter(
+  const jobs = (await getUpcomingCustomerJob(userId as string)).filter(
     (job) => job.customer === userId
   );
 

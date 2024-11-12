@@ -7,6 +7,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { createClerkClient } from "@clerk/nextjs/server";
 import { getRewardsByUserId, updateReward } from "./rewards";
+import { addDays } from "date-fns";
 
 const customerClerk = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY as string,
@@ -198,4 +199,22 @@ const updateJob = async (job: {
   return { message: "Job updated successfully" };
 };
 
-export { addJob, getJobsWithService, getJob, deleteJob, updateJob };
+const getUpcomingCustomerJob = async (customerId: string) => {
+  const currentDate = new Date();
+  const sevenDaysLater = addDays(currentDate, 7);
+  return await Job.find({
+    customer: customerId,
+    "schedule.timeStart": { $gte: currentDate, $lte: sevenDaysLater },
+  })
+    .populate("service")
+    .exec();
+};
+
+export {
+  addJob,
+  getJobsWithService,
+  getJob,
+  deleteJob,
+  updateJob,
+  getUpcomingCustomerJob,
+};
