@@ -116,9 +116,45 @@ export default function Invoices({
     }));
   };
 
+  function formatDate(query: string) {
+    const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (datePattern.test(query)) {
+      const [day, month, year] = query.split("/");
+      return new Date(`${year}-${month}-${day}`);
+    }
+    return null;
+  }
+
+  function searchInvoices(query: string, invoices: Invoice[]) {
+    const parsedDate = formatDate(query);
+
+    return invoices.filter((invoice) => {
+      const invoiceDate = new Date(invoice.dateIssued);
+
+      const dateMatch = parsedDate
+        ? invoiceDate.getDate() === parsedDate.getDate() &&
+          invoiceDate.getMonth() === parsedDate.getMonth() &&
+          invoiceDate.getFullYear() === parsedDate.getFullYear()
+        : false;
+
+      const jobMatch = invoice.job
+        .toString()
+        .toLowerCase()
+        .includes(query.toLowerCase());
+
+      const invoiceIdMatch = invoice.invoiceId
+        .toString()
+        .includes(query.toLowerCase());
+
+      return dateMatch || jobMatch || invoiceIdMatch;
+    });
+  }
+
   const handleSearchFilterSort = useCallback(
     (query: string) => {
       let resultInvoices = initialInvoices;
+      console.log("initial invoices", resultInvoices);
+      console.log("query", query);
 
       // Search
       setQuery(query);
@@ -126,15 +162,8 @@ export default function Invoices({
         // If query is empty, reset the search
         setInvoices(initialInvoices);
       } else {
-        // Filter the invoices based on the customer name or invoice ID
-        resultInvoices = resultInvoices.filter((invoice) => {
-          // console.log("search", resultInvoices);
-          return (
-            invoice.job.includes(query.toLowerCase()) ||
-            invoice.invoiceId.toString().includes(query.toLowerCase()) ||
-            invoice.dateIssued.toString().includes(query.toLowerCase())
-          );
-        });
+        resultInvoices = searchInvoices(query, resultInvoices);
+        console.log("search", resultInvoices);
       }
 
       // Filter by validity status
