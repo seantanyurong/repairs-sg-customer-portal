@@ -80,7 +80,7 @@ export default function BookingClient({ service }: { service: any }) {
   const subtotalPriceRounded = Math.round(subtotalPrice * 100) / 100;
   const gstPrice = 0.09 * itemPrice * priceQty;
   const gstPriceRounded = Math.round(gstPrice * 100) / 100;
-  const discountPrice = form.getValues().referralCode !== '' ? 15 : 0;
+  const discountPrice = form.getValues().referralCode?.startsWith('REW') ? 15 : 0;
   const totalPrice = subtotalPrice + gstPrice - discountPrice;
   const totalPriceRounded = Math.round(totalPrice * 100) / 100;
 
