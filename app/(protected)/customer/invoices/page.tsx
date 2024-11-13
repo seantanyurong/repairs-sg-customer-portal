@@ -57,7 +57,7 @@ export default async function InvoicesPage() {
       let serviceName = "Unknown";
       if (invoice.job) {
         const job = await getJob(invoice.job);
-        serviceName = job.service.name;
+        if (job) serviceName = job.service.name;
       }
 
       return {
