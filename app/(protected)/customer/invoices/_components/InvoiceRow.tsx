@@ -19,7 +19,7 @@ import { MoreHorizontal } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { approveInvoice } from "@/lib/actions/invoices";
 import { toast } from "sonner";
 import QRCode from "qrcode";
@@ -51,13 +51,12 @@ export default async function InvoiceRow({
   const isVoid = validityStatus === "void";
   const isPaid = paymentStatus === "Paid";
   const isApproved = validityStatus === "approved";
-  const [actionType, setActionType] = useState<"approve" | "comment">(
-    "approve"
-  );
+
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
-  console.log(setActionType);
+  const isInitialMount = useRef(true);
+  const hasDialogOpened = useRef(false);
 
   // Approve Invoice
   const handleApproveInvoice = async () => {
@@ -78,8 +77,20 @@ export default async function InvoiceRow({
   };
 
   useEffect(() => {
-    if (!isDialogOpen) router.push("/customer/invoices");
-  }, [isDialogOpen, setIsDialogOpen]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (isDialogOpen) {
+      hasDialogOpened.current = true;
+    }
+
+    if (!isDialogOpen && hasDialogOpened.current) {
+      router.refresh();
+      hasDialogOpened.current = false;
+    }
+  }, [isDialogOpen]);
 
   // Generate QR Code URL
   useEffect(() => {
@@ -148,18 +159,10 @@ export default async function InvoiceRow({
             </DropdownMenu>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>
-                  {actionType === "approve" ? "Payment" : ""}
-                </DialogTitle>
-                <DialogDescription>
-                  {actionType === "approve" ? "Please make your payment." : ""}
-                </DialogDescription>
+                <DialogTitle>Payment</DialogTitle>
+                <DialogDescription>Please make your payment.</DialogDescription>
               </DialogHeader>
-              {actionType === "approve" ? (
-                <img src={qrCodeUrl} alt="QR Code" />
-              ) : (
-                ""
-              )}
+              <img src={qrCodeUrl} alt="QR Code" />
             </DialogContent>
           </Dialog>
         </TableCell>
