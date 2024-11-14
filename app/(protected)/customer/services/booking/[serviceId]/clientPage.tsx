@@ -32,7 +32,7 @@ export default function BookingClient({ service }: { service: any }) {
   const [errors, setErrors] = useState({});
   const [priceQty, setPriceQty] = useState(1);
   const router = useRouter();
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const pathname = usePathname();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -105,6 +105,10 @@ export default function BookingClient({ service }: { service: any }) {
       router.push('/customer/services');
     }
   };
+
+  if (user?.publicMetadata.status === 'Blacklisted') {
+    return <div>You have been blacklisted</div>;
+  }
 
   if (!isLoaded) return <div>Loading...</div>;
 
