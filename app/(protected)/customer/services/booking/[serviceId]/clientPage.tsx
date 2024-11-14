@@ -107,7 +107,9 @@ export default function BookingClient({ service }: { service: any }) {
   };
 
   if (user?.publicMetadata.status === 'Blacklisted') {
-    return <div>You have been blacklisted</div>;
+    return (
+      <div>You have been blacklisted. Please contact us at support@repairs.sg if you would like to make an appeal.</div>
+    );
   }
 
   if (!isLoaded) return <div>Loading...</div>;
