@@ -20,11 +20,15 @@ import { auth } from "@clerk/nextjs/server";
 import JobRow from "./_components/JobRow";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getServices } from "@/lib/actions/services";
+import { get } from "http";
 
 export default async function JobsPage() {
   const { userId } = auth();
 
   const jobs = await getJobsWithServiceAndVehicle();
+  getServices();
+  getVehicles();
 
   const jobTableDisplay = (status?: string) => {
     const todaysDate = new Date();
