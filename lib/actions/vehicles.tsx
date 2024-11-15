@@ -2,8 +2,6 @@
 
 import Vehicle from "@/models/Vehicle";
 import { z } from "zod";
-import { revalidatePath } from "next/cache";
-import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
 
 const fieldFriendlyNames: Record<string, string> = {

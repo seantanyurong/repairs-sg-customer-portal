@@ -29,12 +29,12 @@ export default function MapClient({ initialLat, initialLon, gpsApi }: { initialL
             return json;
           });
 
-        let liveLocation = locationData.filter(function (location: { deviceId: number | null; }) {
+        const liveLocation = locationData.filter(function (location: { deviceId: number | null; }) {
           return location.deviceId === parseInt(gpsApi);
         })
 
         if (liveLocation) {
-          setLiveLat((prev) => liveLocation[0].latitude);
+          setLiveLat(liveLocation[0].latitude);
           setLiveLon(liveLocation[0].longitude);
           console.log("Fetched location data:", liveLocation[0]);
         }

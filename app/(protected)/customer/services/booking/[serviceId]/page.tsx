@@ -2,14 +2,11 @@ import { getService } from '@/lib/actions/services';
 import BookingClient from './clientPage';
 import { clerkClient } from '@clerk/nextjs/server';
 import crypto from "crypto";
-import { getJobs } from '@/lib/actions/jobs';
-import { useUser } from '@clerk/nextjs';
 
 export default async function Booking({ params }: { params: { serviceId: string } }) {
   const service = await getService(params.serviceId);
 
   // check if this customer has any previous jobs
-  const jobs = await getJobs();
   // const { isLoaded, isSignedIn, user } = useUser();
   // console.log(user);
   // const customerJobs = jobs.filter((job) => job.customer === user?.id);

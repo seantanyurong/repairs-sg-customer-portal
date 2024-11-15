@@ -16,15 +16,12 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getJobsWithServiceAndVehicle } from "@/lib/actions/jobs";
 import { getVehicles } from "@/lib/actions/vehicles";
-import { auth } from "@clerk/nextjs/server";
 import JobRow from "./_components/JobRow";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getServices } from "@/lib/actions/services";
-import { get } from "http";
 
 export default async function JobsPage() {
-  const { userId } = auth();
 
   const jobs = await getJobsWithServiceAndVehicle();
   getServices();
