@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getJobsWithServiceAndVehicle } from "@/lib/actions/jobs";
+import { getVehicles } from "@/lib/actions/vehicles";
 import { auth } from "@clerk/nextjs/server";
 import JobRow from "./_components/JobRow";
 import { Button } from "@/components/ui/button";
@@ -23,11 +24,7 @@ import Link from "next/link";
 export default async function JobsPage() {
   const { userId } = auth();
 
-  const jobs = (await getJobsWithServiceAndVehicle();
-  const service = await getServices();
-  const vehicle = await getVehicles()).filter(
-    (job) => job.customer === userId
-  );
+  const jobs = await getJobsWithServiceAndVehicle();
 
   const jobTableDisplay = (status?: string) => {
     const todaysDate = new Date();
