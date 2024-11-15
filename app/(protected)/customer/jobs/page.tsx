@@ -14,18 +14,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getJobsWithService } from "@/lib/actions/jobs";
-import { auth } from "@clerk/nextjs/server";
+import { getJobsWithServiceAndVehicle } from "@/lib/actions/jobs";
+import { getVehicles } from "@/lib/actions/vehicles";
 import JobRow from "./_components/JobRow";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getServices } from "@/lib/actions/services";
 
 export default async function JobsPage() {
-  const { userId } = auth();
 
-  const jobs = (await getJobsWithService()).filter(
-    (job) => job.customer === userId
-  );
+  const jobs = await getJobsWithServiceAndVehicle();
+  getServices();
+  getVehicles();
 
   const jobTableDisplay = (status?: string) => {
     const todaysDate = new Date();
@@ -41,8 +41,10 @@ export default async function JobsPage() {
               serviceName={job.service.name}
               description={job.description}
               address={job.jobAddress}
-              timeStart={job.schedule.timeStart.toLocaleString("en-GB")}
-              timeEnd={job.schedule.timeEnd.toLocaleString("en-GB")}
+              timeStart={job.schedule.timeStart.toLocaleString('en-GB')}
+              timeEnd={job.schedule.timeEnd.toLocaleString('en-GB')}
+              status={job.status}
+              vehicleLicencePlate={job.vehicle?.licencePlate}
               isUpcoming={true}
             />
           );
@@ -59,8 +61,10 @@ export default async function JobsPage() {
             serviceName={job.service.name}
             description={job.description}
             address={job.jobAddress}
-            timeStart={job.schedule.timeStart.toLocaleString("en-GB")}
-            timeEnd={job.schedule.timeEnd.toLocaleString("en-GB")}
+            timeStart={job.schedule.timeStart.toLocaleString('en-GB')}
+            timeEnd={job.schedule.timeEnd.toLocaleString('en-GB')}
+            status={job.status}
+            vehicleLicencePlate={job.vehicle?.licencePlate}
             isUpcoming={false}
           />
         );
@@ -119,13 +123,10 @@ export default async function JobsPage() {
                   <TableRow>
                     <TableHead>Service</TableHead>
                     <TableHead>Description</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Address
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Start
-                    </TableHead>
-                    <TableHead className="hidden md:table-cell">End</TableHead>
+                    <TableHead className='hidden md:table-cell'>Address</TableHead>
+                    <TableHead className='hidden md:table-cell'>Start</TableHead>
+                    <TableHead className='hidden md:table-cell'>End</TableHead>
+                    <TableHead className='hidden md:table-cell'>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>{jobTableDisplay("upcoming")}</TableBody>

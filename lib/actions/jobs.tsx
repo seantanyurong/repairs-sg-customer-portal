@@ -110,34 +110,34 @@ const addJob = async (job: {
   const response =
     job.referralCode !== ""
       ? jobSchema.safeParse({
-          quantity: job.quantity,
-          jobAddress: job.jobAddress,
-          schedule: {
-            timeStart: new Date(formattedSchedule.timeStart),
-            timeEnd: new Date(formattedSchedule.timeEnd),
-          },
-          description: job.description,
-          service: new ObjectId(job.serviceId),
+        quantity: job.quantity,
+        jobAddress: job.jobAddress,
+        schedule: {
+          timeStart: new Date(formattedSchedule.timeStart),
+          timeEnd: new Date(formattedSchedule.timeEnd),
+        },
+        description: job.description,
+        service: new ObjectId(job.serviceId),
+        customer: user.id,
+        price: job.price,
+        referralCode: {
+          referrer: referrer,
+          code: job.referralCode,
           customer: user.id,
-          price: job.price,
-          referralCode: {
-            referrer: referrer,
-            code: job.referralCode,
-            customer: user.id,
-          },
-        })
+        },
+      })
       : jobSchema.safeParse({
-          quantity: job.quantity,
-          jobAddress: job.jobAddress,
-          schedule: {
-            timeStart: new Date(formattedSchedule.timeStart),
-            timeEnd: new Date(formattedSchedule.timeEnd),
-          },
-          description: job.description,
-          service: new ObjectId(job.serviceId),
-          customer: user.id,
-          price: job.price,
-        });
+        quantity: job.quantity,
+        jobAddress: job.jobAddress,
+        schedule: {
+          timeStart: new Date(formattedSchedule.timeStart),
+          timeEnd: new Date(formattedSchedule.timeEnd),
+        },
+        description: job.description,
+        service: new ObjectId(job.serviceId),
+        customer: user.id,
+        price: job.price,
+      });
 
   if (!response.success) {
     return { message: "Error", errors: response.error.flatten().fieldErrors };
@@ -155,11 +155,22 @@ const getJobsWithService = async () => {
   return jobs;
 };
 
+const getJobsWithServiceAndVehicle = async () => {
+  const jobs = await Job.find().populate('service').populate('vehicle').exec();
+
+  return jobs;
+};
+
 const getJob = async (jobId: string) => {
   const job = await Job.findById(jobId).populate("service").exec();
 
   return job;
 };
+
+const getJobs = async () => {
+  const jobs = await Job.find().exec();
+  return jobs;
+}
 
 const deleteJob = async (jobId: string) => {
   await Job.findByIdAndDelete(jobId);
@@ -211,8 +222,8 @@ const getUpcomingCustomerJob = async (customerId: string) => {
 };
 
 export {
-  addJob,
-  getJobsWithService,
+  addJob, getJobs,
+  getJobsWithService, getJobsWithServiceAndVehicle,
   getJob,
   deleteJob,
   updateJob,
