@@ -23,6 +23,7 @@ const formSchema = z.object({
   jobAddress: z.string().min(1),
   schedule: z.string(),
   description: z.string(),
+  referralCode: z.string(),
 });
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +32,7 @@ export default function BookingClient({ service }: { service: any }) {
   const [errors, setErrors] = useState({});
   const [priceQty, setPriceQty] = useState(1);
   const router = useRouter();
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const pathname = usePathname();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,6 +41,7 @@ export default function BookingClient({ service }: { service: any }) {
       quantity: 1,
       jobAddress: '',
       description: '',
+      referralCode: '',
     },
   });
 
@@ -78,7 +80,8 @@ export default function BookingClient({ service }: { service: any }) {
   const subtotalPriceRounded = Math.round(subtotalPrice * 100) / 100;
   const gstPrice = 0.09 * itemPrice * priceQty;
   const gstPriceRounded = Math.round(gstPrice * 100) / 100;
-  const totalPrice = subtotalPrice + gstPrice;
+  const discountPrice = form.getValues().referralCode?.startsWith('REW') ? 15 : 0;
+  const totalPrice = subtotalPrice + gstPrice - discountPrice;
   const totalPriceRounded = Math.round(totalPrice * 100) / 100;
 
   const onSubmit = async () => {
@@ -92,6 +95,7 @@ export default function BookingClient({ service }: { service: any }) {
     });
     if (result?.errors) {
       setMessage(result.message);
+      console.log(result.errors);
       setErrors(result.errors);
       return;
     } else {
@@ -101,6 +105,12 @@ export default function BookingClient({ service }: { service: any }) {
       router.push('/customer/services');
     }
   };
+
+  if (user?.publicMetadata.status === 'Blacklisted') {
+    return (
+      <div>You have been blacklisted. Please contact us at support@repairs.sg if you would like to make an appeal.</div>
+    );
+  }
 
   if (!isLoaded) return <div>Loading...</div>;
 
@@ -317,6 +327,20 @@ export default function BookingClient({ service }: { service: any }) {
                           </FormItem>
                         )}
                       />
+                      {/* Referral Code Field */}
+                      <FormField
+                        control={form.control}
+                        name='referralCode'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Referral Code</FormLabel>
+                            <FormControl>
+                              <Input placeholder='Enter referral code' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                       <Button type='submit' className='w-full'>
                         Book Service
                       </Button>
@@ -372,6 +396,10 @@ export default function BookingClient({ service }: { service: any }) {
                     <li className='flex items-center justify-between'>
                       <span className='text-muted-foreground'>GST</span>
                       <span>${gstPriceRounded}</span>
+                    </li>
+                    <li className='flex items-center justify-between'>
+                      <span className='text-muted-foreground'>Discount</span>
+                      <span>${discountPrice}</span>
                     </li>
                     <li className='flex items-center justify-between font-semibold'>
                       <span className='text-muted-foreground'>Total</span>

@@ -1,3 +1,12 @@
+"use client";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,16 +19,20 @@ import { MoreHorizontal } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
+import { useEffect, useRef, useState } from "react";
+import { approveInvoice } from "@/lib/actions/invoices";
+import { toast } from "sonner";
+import QRCode from "qrcode";
 
-export default function InvoiceRow({
+export default async function InvoiceRow({
   invoiceId,
   dateIssued,
   totalAmount,
   lineItems,
   validityStatus,
   paymentStatus,
-  paymentMethod,
-  customer,
+  qrCode,
+  job,
 }: {
   invoiceId: string;
   dateIssued: string;
@@ -27,8 +40,8 @@ export default function InvoiceRow({
   lineItems: Array<string>;
   paymentStatus: string;
   validityStatus: string;
-  paymentMethod: string;
-  customer: string;
+  qrCode: string;
+  job: string;
 }) {
   const router = useRouter();
 
@@ -36,6 +49,61 @@ export default function InvoiceRow({
   const formattedDateIssued = dayjs(dateIssued).format("DD/MM/YYYY");
 
   const isVoid = validityStatus === "void";
+  const isPaid = paymentStatus === "Paid";
+  const isApproved = validityStatus === "approved";
+
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+
+  const isInitialMount = useRef(true);
+  const hasDialogOpened = useRef(false);
+
+  // Approve Invoice
+  const handleApproveInvoice = async () => {
+    setIsDialogOpen(true);
+    try {
+      await approveInvoice({
+        invoiceId: invoiceId,
+        validityStatus: "approved",
+      });
+
+      toast("Invoice Approved Successfully", {
+        className: "cursor-pointer",
+      });
+    } catch (error) {
+      console.error("Error voiding invoice:", error);
+      toast.error("An error occurred while voiding the invoice.");
+    }
+  };
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (isDialogOpen) {
+      hasDialogOpened.current = true;
+    }
+
+    if (!isDialogOpen && hasDialogOpened.current) {
+      router.refresh();
+      hasDialogOpened.current = false;
+    }
+  }, [isDialogOpen]);
+
+  // Generate QR Code URL
+  useEffect(() => {
+    const generateQrCode = async () => {
+      try {
+        const url = await QRCode.toDataURL(qrCode);
+        setQrCodeUrl(url);
+      } catch (error) {
+        console.error("Failed to generate QR code", error);
+      }
+    };
+    generateQrCode();
+  }, [qrCode]);
 
   return (
     <>
@@ -47,7 +115,7 @@ export default function InvoiceRow({
           {formattedDateIssued.toString()}
         </TableCell>
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
-          {customer}
+          {job.toString()}
         </TableCell>
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
           ${totalAmount.toString()}
@@ -61,29 +129,42 @@ export default function InvoiceRow({
         <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
           {paymentStatus}
         </TableCell>
-        <TableCell className={isVoid ? "opacity-50 cursor-not-allowed" : ""}>
-          {paymentMethod}
-        </TableCell>
         <TableCell>
-          <DropdownMenu modal={false}>
-            <DropdownMenuTrigger asChild>
-              <Button aria-haspopup="true" size="icon" variant="ghost">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() =>
-                  router.push(`/customer/invoices/view-invoice/${invoiceId}`)
-                }
-                className="cursor-pointer"
-              >
-                View
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button aria-haspopup="true" size="icon" variant="ghost">
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.push(`/customer/invoices/view-invoice/${invoiceId}`)
+                  }
+                  className="cursor-pointer"
+                >
+                  View
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  disabled={isVoid || isPaid || isApproved}
+                  onClick={handleApproveInvoice}
+                  className="cursor-pointer"
+                >
+                  Approve
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Payment</DialogTitle>
+                <DialogDescription>Please make your payment.</DialogDescription>
+              </DialogHeader>
+              <img src={qrCodeUrl} alt="QR Code" />
+            </DialogContent>
+          </Dialog>
         </TableCell>
       </TableRow>
     </>

@@ -11,6 +11,9 @@ const jobSchema = new mongoose.Schema(
       required: [true, 'Quantity Is Required!'],
       min: [1, 'Quantity Must Be Greater Than 1'],
     },
+    price: {
+      type: Number,
+    },
     service: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Service',
@@ -51,7 +54,7 @@ const jobSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: 'Draft',
+      default: 'Pending',
       required: [true, 'Job Status Is Required!'],
     },
     schedule: {
@@ -64,33 +67,36 @@ const jobSchema = new mongoose.Schema(
         required: [true, 'End Date Is Required!'],
       },
     },
+    staff: {
+      type: String,
+    },
     vehicle: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Vehicle',
     },
+    referralCode: {
+      referrer: {
+        type: String,
+      },
+      code: {
+        type: String,
+      },
+      customer: {
+        type: String,
+      },
+    },
+    comments: [
+      {
+        sender: {
+          type: String,
+        },
+        content: {
+          type: String,
+        },
+      },
+    ],
   },
   { versionKey: false, timestamps: true },
 );
 
 export default mongoose.models.Job || mongoose.model('Job', jobSchema);
-
-// Changed Job Address to just a string for now
-// Changed Customer to clerk's customer ID
-// Removed these three below for now
-// categoryType: [
-//   {
-//     type: String,
-//     enum: ['ELECTRICIAN', 'VENTILATION', 'PLUMBER', 'HANDYMAN', 'AIRCON'],
-//     required: [true, 'Category Type Is Required'],
-//   },
-// ],
-// createdBy: {
-//   type: mongoose.Schema.Types.ObjectId,
-//   ref: 'Staff',
-//   required: [true, 'Created By Is Required!'],
-// },
-// lastUpdatedBy: {
-//   type: mongoose.Schema.Types.ObjectId,
-//   ref: 'Staff',
-//   required: [true, 'Last Updated By Is Required!'],
-// },

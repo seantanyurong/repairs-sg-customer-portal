@@ -46,7 +46,9 @@
     "next-share": "^0.27.0",
     "next-themes": "^0.3.0",
     "paynowqr": "^1.1.2",
+    "qrcode": "^1.5.4",
     "react": "^18",
+    "react-alice-carousel": "^2.9.1",
     "react-dom": "^18",
     "react-hook-form": "^7.53.0",
     "react-hotkeys-hook": "^4.5.1",
@@ -58,6 +60,7 @@
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",

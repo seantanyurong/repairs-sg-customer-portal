@@ -41,10 +41,11 @@ interface Invoice {
   paymentStatus: string;
   validityStatus: string;
   publicNote: string;
-  customer: string;
   payments: { paymentMethod: string }[] | never[];
   createdAt: string | Date;
   updatedAt: string | Date;
+  qrCode: string;
+  job: string;
 }
 
 interface InvoicesProps {
@@ -52,7 +53,7 @@ interface InvoicesProps {
   customerFullName: string;
 }
 
-type ValidityStatus = "active" | "draft" | "void";
+type ValidityStatus = "active" | "void" | "approved";
 type PaymentStatus = "paid" | "unpaid";
 type PaymentMethod = "cash" | "banktransfer" | "paynow" | "unknown";
 
@@ -71,12 +72,12 @@ export default function Invoices({
   // Filter states
   const [validityStatus, setValidityStatus] = useState<{
     active: boolean;
-    draft: boolean;
     void: boolean;
+    approved: boolean;
   }>({
     active: true,
-    draft: true,
     void: true,
+    approved: true,
   });
   const [paymentStatus, setPaymentStatus] = useState<{
     paid: boolean;
@@ -115,9 +116,45 @@ export default function Invoices({
     }));
   };
 
+  function formatDate(query: string) {
+    const datePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+    if (datePattern.test(query)) {
+      const [day, month, year] = query.split("/");
+      return new Date(`${year}-${month}-${day}`);
+    }
+    return null;
+  }
+
+  function searchInvoices(query: string, invoices: Invoice[]) {
+    const parsedDate = formatDate(query);
+
+    return invoices.filter((invoice) => {
+      const invoiceDate = new Date(invoice.dateIssued);
+
+      const dateMatch = parsedDate
+        ? invoiceDate.getDate() === parsedDate.getDate() &&
+          invoiceDate.getMonth() === parsedDate.getMonth() &&
+          invoiceDate.getFullYear() === parsedDate.getFullYear()
+        : false;
+
+      const jobMatch = invoice.job
+        .toString()
+        .toLowerCase()
+        .includes(query.toLowerCase());
+
+      const invoiceIdMatch = invoice.invoiceId
+        .toString()
+        .includes(query.toLowerCase());
+
+      return dateMatch || jobMatch || invoiceIdMatch;
+    });
+  }
+
   const handleSearchFilterSort = useCallback(
     (query: string) => {
       let resultInvoices = initialInvoices;
+      console.log("initial invoices", resultInvoices);
+      console.log("query", query);
 
       // Search
       setQuery(query);
@@ -125,14 +162,8 @@ export default function Invoices({
         // If query is empty, reset the search
         setInvoices(initialInvoices);
       } else {
-        // Filter the invoices based on the customer name or invoice ID
-        resultInvoices = resultInvoices.filter((invoice) => {
-          // console.log("search", resultInvoices);
-          return (
-            customerFullName.includes(query.toLowerCase()) ||
-            invoice.invoiceId.toString().includes(query.toLowerCase())
-          );
-        });
+        resultInvoices = searchInvoices(query, resultInvoices);
+        console.log("search", resultInvoices);
       }
 
       // Filter by validity status
@@ -206,41 +237,31 @@ export default function Invoices({
   }, [query, handleSearchFilterSort]);
 
   const invoiceDisplay = (validityStatus?: string) => {
-    if (validityStatus === "all") {
-      return invoices.map((invoice) => {
-        return (
-          <InvoiceRow
-            key={invoice._id.toString()}
-            invoiceId={invoice.invoiceId.toString()}
-            dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
-            totalAmount={invoice.totalAmount.toString()}
-            lineItems={invoice.lineItems}
-            paymentStatus={invoice.paymentStatus}
-            validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
-          />
-        );
-      });
-    }
+    // Filter invoices based on validityStatus, or include all if "all" is selected
+    const filteredInvoices =
+      validityStatus === "all"
+        ? invoices
+        : invoices.filter(
+            (invoice) => invoice.validityStatus === validityStatus
+          );
 
-    return invoices
-      .filter((invoice) => invoice.validityStatus === validityStatus)
-      .map((invoice) => {
-        return (
-          <InvoiceRow
-            key={invoice._id.toString()}
-            invoiceId={invoice.invoiceId.toString()}
-            dateIssued={invoice.dateIssued.toString()}
-            customer={customerFullName}
-            totalAmount={invoice.totalAmount.toString()}
-            lineItems={invoice.lineItems}
-            paymentStatus={invoice.paymentStatus}
-            validityStatus={invoice.validityStatus}
-            paymentMethod={invoice.payments[0]?.paymentMethod}
-          />
-        );
-      });
+    // Map invoices to promises that fetch job and return InvoiceRow components
+    const invoiceRows = filteredInvoices.map((invoice) => {
+      return (
+        <InvoiceRow
+          key={invoice._id.toString()}
+          invoiceId={invoice.invoiceId.toString()}
+          dateIssued={invoice.dateIssued.toString()}
+          totalAmount={invoice.totalAmount.toString()}
+          lineItems={invoice.lineItems}
+          paymentStatus={invoice.paymentStatus}
+          validityStatus={invoice.validityStatus}
+          qrCode={invoice.qrCode}
+          job={invoice.job}
+        />
+      );
+    });
+    return invoiceRows;
   };
 
   const invoiceCount = (validityStatus?: string) => {
@@ -272,12 +293,11 @@ export default function Invoices({
               <TableRow>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>Customer</TableHead>
+                <TableHead>Service</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Line Items</TableHead>
                 <TableHead>Validity Status</TableHead>
                 <TableHead>Payment Status</TableHead>
-                <TableHead>Payment Method</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -332,23 +352,6 @@ export default function Invoices({
 
                 <div className="flex items-center space-x-2">
                   <Checkbox
-                    id="validityDraft"
-                    defaultChecked={true}
-                    onCheckedChange={(checked) => {
-                      if (typeof checked === "boolean")
-                        handleValidityChange("draft", checked);
-                    }}
-                  />
-                  <label
-                    htmlFor="validityDraft"
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    Draft
-                  </label>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <Checkbox
                     id="validityVoid"
                     defaultChecked={true}
                     onCheckedChange={(checked) => {
@@ -361,6 +364,23 @@ export default function Invoices({
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
                     Void
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="validityVoid"
+                    defaultChecked={true}
+                    onCheckedChange={(checked) => {
+                      if (typeof checked === "boolean")
+                        handleValidityChange("approved", checked);
+                    }}
+                  />
+                  <label
+                    htmlFor="validityVoid"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Approved
                   </label>
                 </div>
               </div>
@@ -532,7 +552,6 @@ export default function Invoices({
           <Tabs defaultValue="all">
             <TabsContent value="all">{cardDisplay("all")}</TabsContent>
             <TabsContent value="active">{cardDisplay("active")}</TabsContent>
-            <TabsContent value="draft">{cardDisplay("draft")}</TabsContent>
             <TabsContent value="void">{cardDisplay("void")}</TabsContent>
           </Tabs>
         </div>

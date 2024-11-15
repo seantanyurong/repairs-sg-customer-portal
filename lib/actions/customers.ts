@@ -1,7 +1,7 @@
-"use server";
+'use server';
 
-import Customers from "@/models/Customer";
-import { createClerkClient } from "@clerk/nextjs/server";
+import Customers from '@/models/Customer';
+import { createClerkClient } from '@clerk/nextjs/server';
 
 const customerClerk = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY as string,
@@ -17,12 +17,12 @@ const getCustomerByEmail = async (email: string) => {
   });
 
   if (result.totalCount === 0) {
-    throw new Error("No customer found with that email address");
+    throw new Error('No customer found with that email address');
   }
   console.log(result.data[0]);
 
   if (result.data[0].banned) {
-    throw new Error("Customer is banned");
+    throw new Error('Customer is banned');
   }
   return JSON.stringify(result.data[0]);
 };
@@ -30,7 +30,7 @@ const getCustomerByEmail = async (email: string) => {
 const getCustomerById = async (id: string) => {
   const user = await customerClerk.users.getUser(id);
 
-  if (!user) throw new Error("No customer found with that id");
+  if (!user) throw new Error('No customer found with that id');
 
   return JSON.stringify(user);
 };
