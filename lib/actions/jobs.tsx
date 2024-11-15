@@ -64,11 +64,22 @@ const getJobsWithService = async () => {
   return jobs;
 };
 
+const getJobsWithServiceAndVehicle = async () => {
+  const jobs = await Job.find().populate('service').populate('vehicle').exec();
+
+  return jobs;
+};
+
 const getJob = async (jobId: string) => {
   const job = await Job.findById(jobId).populate('service').exec();
 
   return job;
 };
+
+const getJobs = async () => {
+  const jobs = await Job.find().exec();
+  return jobs;
+}
 
 const deleteJob = async (jobId: string) => {
   await Job.findByIdAndDelete(jobId);
@@ -108,4 +119,4 @@ const updateJob = async (job: {
   return { message: 'Job updated successfully' };
 };
 
-export { addJob, getJobsWithService, getJob, deleteJob, updateJob };
+export { addJob, getJobs, getJobsWithService, getJobsWithServiceAndVehicle, getJob, deleteJob, updateJob };

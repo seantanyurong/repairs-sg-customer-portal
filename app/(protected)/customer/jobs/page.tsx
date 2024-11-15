@@ -1,13 +1,17 @@
-import { getJobsWithService } from '@/lib/actions/jobs';
+import { getJobsWithServiceAndVehicle } from '@/lib/actions/jobs';
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { getServices } from '@/lib/actions/services';
+import { getVehicles } from '@/lib/actions/vehicles';
 
 import JobRow from './_components/JobRow';
 
 export default async function JobsPage() {
-  const jobs = await getJobsWithService();
+  const jobs = await getJobsWithServiceAndVehicle();
+  const service = await getServices();
+  const vehicle = await getVehicles();
 
   const jobTableDisplay = (status?: string) => {
     const todaysDate = new Date();
@@ -25,6 +29,8 @@ export default async function JobsPage() {
               address={job.jobAddress}
               timeStart={job.schedule.timeStart.toLocaleString('en-GB')}
               timeEnd={job.schedule.timeEnd.toLocaleString('en-GB')}
+              status={job.status}
+              vehicleLicencePlate={job.vehicle?.licencePlate}
               isUpcoming={true}
             />
           );
@@ -43,6 +49,8 @@ export default async function JobsPage() {
             address={job.jobAddress}
             timeStart={job.schedule.timeStart.toLocaleString('en-GB')}
             timeEnd={job.schedule.timeEnd.toLocaleString('en-GB')}
+            status={job.status}
+            vehicleLicencePlate={job.vehicle?.licencePlate}
             isUpcoming={false}
           />
         );
@@ -87,6 +95,7 @@ export default async function JobsPage() {
                     <TableHead className='hidden md:table-cell'>Address</TableHead>
                     <TableHead className='hidden md:table-cell'>Start</TableHead>
                     <TableHead className='hidden md:table-cell'>End</TableHead>
+                    <TableHead className='hidden md:table-cell'>Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>{jobTableDisplay('upcoming')}</TableBody>

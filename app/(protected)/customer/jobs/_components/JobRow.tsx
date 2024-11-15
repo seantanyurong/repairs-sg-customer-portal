@@ -20,6 +20,8 @@ export default function JobRow({
   timeStart,
   timeEnd,
   isUpcoming,
+  status,
+  vehicleLicencePlate,
 }: {
   id: string;
   serviceName: string;
@@ -28,6 +30,8 @@ export default function JobRow({
   timeStart: string;
   timeEnd: string;
   isUpcoming: boolean;
+  status: string;
+  vehicleLicencePlate?: string;
 }) {
   const router = useRouter();
 
@@ -38,6 +42,7 @@ export default function JobRow({
       <TableCell className='font-medium hidden md:table-cell'>{address}</TableCell>
       <TableCell className='font-medium hidden md:table-cell'>{timeStart}</TableCell>
       <TableCell className='font-medium hidden md:table-cell'>{timeEnd}</TableCell>
+      <TableCell className='font-medium hidden md:table-cell'>{status}</TableCell>
       {isUpcoming && (
         <TableCell>
           <DropdownMenu>
@@ -54,6 +59,13 @@ export default function JobRow({
                 className='cursor-pointer'>
                 View Details
               </DropdownMenuItem>
+              {status !== 'Completed' && status !== 'Cancelled' && status !== 'Pending' && vehicleLicencePlate && (
+                <DropdownMenuItem
+                  onClick={() => router.push(`/customer/jobs/view-location/${vehicleLicencePlate}`)}
+                  className='cursor-pointer'>
+                  View Vehicle Location
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>

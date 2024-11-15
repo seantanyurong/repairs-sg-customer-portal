@@ -64,6 +64,10 @@ const jobSchema = new mongoose.Schema(
         required: [true, 'End Date Is Required!'],
       },
     },
+    vehicle: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Vehicle',
+    },
   },
   { versionKey: false, timestamps: true },
 );
